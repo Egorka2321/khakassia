@@ -35,12 +35,12 @@
     overflow-x: hidden;
   }
 
-  /* === FLAG BACKGROUND OVERLAY === */
-  #bgFlag {
+  /* === FLAG LAYERS - cross-fade через opacity, не background-color === */
+  .flag-layer {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
     z-index: -1; pointer-events: none;
     opacity: 0;
-    background-color: #d0f0d8;
+    transition: opacity 2.5s ease;
   }
   .hero { transition: background 2.5s ease; }
 
@@ -59,8 +59,9 @@
     bottom: -2px;
     left: 0; right: 0;
     height: 60px;
-    background: var(--cream);
+    background: var(--curve-color, var(--cream));
     clip-path: ellipse(55% 100% at 50% 100%);
+    transition: background 2.5s ease;
   }
 
   .stars {
@@ -584,8 +585,12 @@
 </head>
 <body>
 
-<!-- FLAG BACKGROUND OVERLAY -->
-<div id="bgFlag"></div>
+<!-- FLAG BACKGROUND LAYERS (cross-fade) -->
+<div id="flagGreen"  class="flag-layer" style="background:#d0f0d8;"></div>
+<div id="flagBlue"   class="flag-layer" style="background:#c8dcf4;"></div>
+<div id="flagWhite"  class="flag-layer" style="background:#eeeeee;"></div>
+<div id="flagRed"    class="flag-layer" style="background:#f5ccc8;"></div>
+<div id="flagGold"   class="flag-layer" style="background:#f5e8c0;"></div>
 
 <!-- HERO -->
 <div class="hero">
@@ -1060,48 +1065,41 @@
     if (duration) setTimeout(() => setMood('normal'), duration);
   }
 
-  const bgFlag = document.getElementById('bgFlag');
-  const heroEl = document.querySelector('.hero');
-
-  // Flag colors (soft, не кричащие)
-  const flagColors = [
-    { bg: '#d0f0d8', hero: 'linear-gradient(160deg, #1b6a20 0%, #2d8a4f 40%, #52b788 70%, #74b9d4 100%)' }, // зелёный
-    { bg: '#c8dcf4', hero: 'linear-gradient(160deg, #1a3a7a 0%, #1a5ea8 40%, #4a8ad4 70%, #74b9d4 100%)' }, // синий
-    { bg: '#f2f2f2', hero: 'linear-gradient(160deg, #2a5a3a 0%, #3a7a5a 40%, #60a880 70%, #a0d4c0 100%)' }, // белый
-    { bg: '#f5ccc8', hero: 'linear-gradient(160deg, #6a1010 0%, #c0281a 40%, #d45a40 70%, #74b9d4 100%)' }, // красный
-    { bg: '#f5e8c0', hero: 'linear-gradient(160deg, #7a5a00 0%, #c89010 40%, #d4a830 70%, #74b9d4 100%)' }, // золотой
+  const flagLayers = [
+    { el: document.getElementById('flagGreen'), hero: 'linear-gradient(160deg, #1b6a20 0%, #2d8a4f 40%, #52b788 70%, #74b9d4 100%)', curve: '#d0f0d8' },
+    { el: document.getElementById('flagBlue'),  hero: 'linear-gradient(160deg, #1a3a7a 0%, #1a5ea8 40%, #4a8ad4 70%, #74b9d4 100%)', curve: '#c8dcf4' },
+    { el: document.getElementById('flagWhite'), hero: 'linear-gradient(160deg, #2a5a3a 0%, #3a7a5a 40%, #60a880 70%, #a0d4c0 100%)', curve: '#eeeeee' },
+    { el: document.getElementById('flagRed'),   hero: 'linear-gradient(160deg, #6a1010 0%, #c0281a 40%, #d45a40 70%, #74b9d4 100%)', curve: '#f5ccc8' },
+    { el: document.getElementById('flagGold'),  hero: 'linear-gradient(160deg, #7a5a00 0%, #c89010 40%, #d4a830 70%, #74b9d4 100%)', curve: '#f5e8c0' },
   ];
 
+  const heroEl = document.querySelector('.hero');
   let flagInterval = null;
-  let flagColorIdx = 0;
   let flagActive = false;
+  let flagColorIdx = 0;
 
-  function applyFlagColor(idx) {
-    const c = flagColors[idx];
-    bgFlag.style.transition = 'background-color 2.5s ease, opacity 1.5s ease';
-    bgFlag.style.backgroundColor = c.bg;
-    heroEl.style.transition = 'background 2.5s ease';
-    heroEl.style.background = c.hero;
+  function showFlagLayer(idx) {
+    flagLayers.forEach((l, i) => { l.el.style.opacity = i === idx ? '0.6' : '0'; });
+    heroEl.style.background = flagLayers[idx].hero;
+    heroEl.style.setProperty('--curve-color', flagLayers[idx].curve);
   }
 
   function setFlagMode(on) {
     if (on && !flagActive) {
       flagActive = true;
-      bgFlag.style.opacity = '0.55';
-      applyFlagColor(0);
-      flagColorIdx = 1;
+      flagColorIdx = 0;
+      showFlagLayer(0);
       flagInterval = setInterval(() => {
-        applyFlagColor(flagColorIdx);
-        flagColorIdx = (flagColorIdx + 1) % flagColors.length;
+        flagColorIdx = (flagColorIdx + 1) % flagLayers.length;
+        showFlagLayer(flagColorIdx);
       }, 3000);
     } else if (!on && flagActive) {
       flagActive = false;
       clearInterval(flagInterval);
       flagInterval = null;
-      bgFlag.style.transition = 'opacity 2s ease';
-      bgFlag.style.opacity = '0';
-      heroEl.style.transition = 'background 2.5s ease';
+      flagLayers.forEach(l => { l.el.style.opacity = '0'; });
       heroEl.style.background = 'linear-gradient(160deg, #1b4332 0%, #2d6a4f 40%, #40916c 70%, #74b9d4 100%)';
+      heroEl.style.setProperty('--curve-color', 'var(--cream)');
     }
   }
 
