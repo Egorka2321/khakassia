@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Республика Хакасия — Интерактивный доклад</title>
+<link href="https://fonts.googleapis.com/css2?family=Geologica:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<style>
+:root {
+  --forest:      #2d5a27;
+  --forest-l:    #4a7c43;
+  --forest-d:    #1a3a16;
+  --gold:        #c8a84b;
+  --gold-b:      #f0c040;
+  --cream:       #f4ede0;
+  --cream-d:     #e9dfd0;
+  --bark:        #6b4e37;
+  --text:        #1e2d1a;
+  --text-m:      #3d5c38;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Geologica',sans-serif;
+  background:var(--cream);
+  color:var(--text);
+  min-height:100vh;
+}
+
+/* ── HEADER ─────────────────────────────── */
+header{
+  background:linear-gradient(140deg,var(--forest-d) 0%,var(--forest) 55%,var(--forest-l) 100%);
+  color:#fff;
+  padding:2.2rem 2.5rem 3rem;
+  position:relative;
+  overflow:hidden;
+}
+header::after{
+  content:'';position:absolute;bottom:-1px;left:0;right:0;
+  height:40px;background:var(--cream);
+  clip-path:ellipse(60% 100% at 50% 100%);
+}
+.header-inner{max-width:1140px;margin:0 auto}
+header h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.8rem,4vw,2.9rem);
+  font-weight:700;letter-spacing:.02em;
+  text-shadow:0 2px 10px rgba(0,0,0,.35);
+}
+header p{
+  color:rgba(255,255,255,.75);font-size:.9rem;
+  margin-top:.4rem;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:300;
+}
+.header-tags{display:flex;gap:.6rem;margin-top:1rem;flex-wrap:wrap}
+.tag{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+  border-radius:20px;padding:.25rem .8rem;font-size:.78rem;
+  color:rgba(255,255,255,.85);letter-spacing:.05em;
+}
+
+/* ── LAYOUT ─────────────────────────────── */
+.wrap{
+  max-width:1140px;margin:0 auto;
+  display:grid;grid-template-columns:260px 1fr;
+  gap:2rem;padding:2.5rem 1.5rem 4rem;
+  align-items:start;
+}
+
+/* ── SIDEBAR ─────────────────────────────── */
+.sidebar{position:sticky;top:1.5rem}
+.nav-label{
+  font-size:.7rem;text-transform:uppercase;letter-spacing:.15em;
+  color:var(--forest-l);font-weight:500;
+  margin-bottom:.8rem;padding-bottom:.5rem;
+  border-bottom:1px solid rgba(45,90,39,.18);
+}
+.tbtn{
+  display:flex;align-items:center;gap:.65rem;width:100%;
+  background:none;border:none;
+  padding:.65rem .95rem;border-radius:10px;
+  cursor:pointer;font-family:'Geologica',sans-serif;
+  font-size:.88rem;color:var(--text-m);
+  text-align:left;transition:all .2s;margin-bottom:.25rem;
+}
+.tbtn:hover{background:rgba(45,90,39,.09);color:var(--forest-d);transform:translateX(3px)}
+.tbtn.active{background:var(--forest);color:#fff;font-weight:500}
+.tbtn .ico{width:1.4rem;text-align:center;font-size:1rem;flex-shrink:0}
+
+/* ── CONTENT ─────────────────────────────── */
+.content{display:flex;flex-direction:column;gap:1.6rem}
+
+/* ── BIRD PANEL ─────────────────────────────── */
+.bird-panel{
+  display:flex;align-items:flex-end;gap:1.5rem;
+  background:#fff;border-radius:20px;
+  padding:1.6rem 1.8rem;
+  box-shadow:0 4px 24px rgba(45,90,39,.09);
+  border:1px solid rgba(45,90,39,.09);
+  min-height:200px;
+}
+.bird-wrap{flex-shrink:0;text-align:center}
+.bird-svg{
+  width:110px;height:118px;
+  animation:bob 2.8s ease-in-out infinite;
+  cursor:pointer;
+  filter:drop-shadow(0 5px 10px rgba(0,0,0,.13));
+}
+.bird-svg:hover{animation:excited .5s ease-in-out 3}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-9px) rotate(2deg)}}
+@keyframes excited{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+.bird-name{font-size:.68rem;color:var(--forest-l);font-weight:500;margin-top:.4rem;letter-spacing:.05em}
+
+.bubble{
+  flex:1;background:var(--cream);
+  border-radius:16px 16px 16px 4px;
+  padding:1.3rem 1.5rem;position:relative;
+  border:1px solid rgba(45,90,39,.1);
+}
+.bubble::before{
+  content:'';position:absolute;left:-12px;bottom:22px;
+  border:10px solid transparent;border-right-color:rgba(45,90,39,.1);
+}
+.bubble::after{
+  content:'';position:absolute;left:-10px;bottom:23px;
+  border:9px solid transparent;border-right-color:var(--cream);
+}
+.bubble-tag{
+  font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--gold);font-weight:500;margin-bottom:.5rem;
+}
+.bubble-text{font-size:.95rem;line-height:1.8;color:var(--text);transition:opacity .25s}
+.bubble-text strong{color:var(--forest)}
+
+/* ── DETAIL CARD ─────────────────────────────── */
+.card{
+  background:#fff;border-radius:16px;padding:2rem;
+  box-shadow:0 4px 22px rgba(45,90,39,.07);
+  border:1px solid rgba(45,90,39,.08);
+  display:none;
+}
+.card.on{display:block;animation:up .38s ease}
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+.card-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.45rem;color:var(--forest-d);
+  margin-bottom:1.2rem;padding-bottom:.8rem;
+  border-bottom:2px solid var(--cream-d);
+  display:flex;align-items:center;gap:.6rem;
+}
+.card-body{font-size:.94rem;line-height:1.82;color:#243020}
+.card-body p{margin-bottom:.95rem}
+.card-body ul{padding-left:1.4rem;margin-bottom:.95rem}
+.card-body li{margin-bottom:.55rem;line-height:1.72}
+.card-body strong{color:var(--forest-d)}
+
+.hl{
+  background:rgba(45,90,39,.065);
+  border-left:3px solid var(--forest-l);
+  border-radius:0 8px 8px 0;
+  padding:.9rem 1.1rem;margin:.9rem 0;
+  font-size:.91rem;line-height:1.7;
+}
+
+.stats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  gap:.9rem;margin:1rem 0;
+}
+.stat{
+  background:var(--cream);border-radius:10px;
+  padding:.8rem 1rem;text-align:center;
+  border:1px solid rgba(45,90,39,.08);
+}
+.stat-n{font-size:1.25rem;font-weight:600;color:var(--forest);display:block}
+.stat-l{font-size:.73rem;color:var(--text-m);display:block;margin-top:.2rem;line-height:1.35}
+
+/* timeline */
+.tl{list-style:none;padding:0;margin:.8rem 0}
+.tl li{
+  display:flex;gap:1rem;padding:.6rem 0;
+  border-bottom:1px solid rgba(45,90,39,.08);
+  align-items:flex-start;
+}
+.tl li:last-child{border:none}
+.tl .yr{
+  background:var(--forest);color:#fff;
+  border-radius:6px;padding:.2rem .55rem;
+  font-size:.75rem;font-weight:600;white-space:nowrap;
+  flex-shrink:0;margin-top:.1rem;
+}
+
+/* mono cities */
+.cities{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1rem 0}
+.city{
+  background:var(--cream);border-radius:10px;
+  padding:.9rem 1.1rem;border-left:3px solid var(--forest-l);
+  border-top:1px solid rgba(45,90,39,.08);
+  border-right:1px solid rgba(45,90,39,.08);
+  border-bottom:1px solid rgba(45,90,39,.08);
+}
+.city.bad{border-left-color:#c0392b}
+.city h4{font-size:.9rem;font-weight:600;color:var(--forest-d);margin-bottom:.3rem}
+.city p{font-size:.82rem;color:#3a4a38;line-height:1.55}
+
+/* heritage items */
+.sites{display:flex;flex-direction:column;gap:.8rem;margin-top:.8rem}
+.site{
+  display:flex;gap:1rem;align-items:flex-start;
+  background:var(--cream);border-radius:10px;
+  padding:.9rem 1.1rem;border:1px solid rgba(45,90,39,.08);
+}
+.site-ico{font-size:1.4rem;flex-shrink:0;margin-top:.1rem}
+.site-text h4{font-size:.9rem;font-weight:600;color:var(--forest-d);margin-bottom:.25rem}
+.site-text p{font-size:.83rem;line-height:1.6;color:#3a4a38}
+
+footer{
+  text-align:center;padding:1.5rem;
+  color:rgba(45,90,39,.45);font-size:.78rem;
+  border-top:1px solid rgba(45,90,39,.1);
+  max-width:1140px;margin:0 auto;
+}
+#map{height:500px;border-radius:12px;overflow:hidden;border:1px solid rgba(45,90,39,.12)}
+.leaflet-popup-content-wrapper{border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.15);font-family:'Geologica',sans-serif}
+.leaflet-popup-content{margin:10px 14px;font-size:.85rem;line-height:1.65}
+.pop-title{font-weight:600;font-size:.95rem;color:#1a3a16;margin-bottom:.35rem}
+.pop-tag{display:inline-block;background:#e8f2e8;color:#2d5a27;border-radius:4px;padding:1px 7px;font-size:.72rem;margin-bottom:.4rem}
+.pop-tag.warn{background:#fff0e8;color:#a04020}
+.map-legend{
+  display:flex;flex-wrap:wrap;gap:.6rem;
+  margin-top:.9rem;font-size:.82rem;align-items:center;
+}
+.leg-item{display:flex;align-items:center;gap:.4rem;color:var(--text-m)}
+.leg-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.map-note{font-size:.78rem;color:var(--text-m);margin-top:.6rem;font-style:italic}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <h1>Республика Хакасия</h1>
+    <p>Интерактивный географический доклад</p>
+    <div class="header-tags">
+      <span class="tag">Южная Сибирь</span>
+      <span class="tag">61 569 км²</span>
+      <span class="tag">Столица: Абакан</span>
+      <span class="tag">Земля пяти стихий</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ── SIDEBAR ── -->
+  <nav class="sidebar">
+    <div class="nav-label">Разделы доклада</div>
+    <button class="tbtn active" id="btn-welcome"    onclick="go('welcome')">   <span class="ico">🌿</span>Добро пожаловать</button>
+    <button class="tbtn"        id="btn-history"    onclick="go('history')">   <span class="ico">📜</span>История</button>
+    <button class="tbtn"        id="btn-resources"  onclick="go('resources')"> <span class="ico">⛏️</span>Ресурсы</button>
+    <button class="tbtn"        id="btn-climate"    onclick="go('climate')">   <span class="ico">🌡️</span>Климат</button>
+    <button class="tbtn"        id="btn-population" onclick="go('population')"><span class="ico">👥</span>Население</button>
+    <button class="tbtn"        id="btn-economy"    onclick="go('economy')">   <span class="ico">🏭</span>Экономика</button>
+    <button class="tbtn"        id="btn-projects"   onclick="go('projects')">  <span class="ico">🏗️</span>Несост. проекты</button>
+    <button class="tbtn"        id="btn-heritage"   onclick="go('heritage')">  <span class="ico">🏛️</span>Культ. наследие</button>
+    <button class="tbtn"        id="btn-branding"   onclick="go('branding')">  <span class="ico">✨</span>Брендинг</button>
+    <button class="tbtn"        id="btn-map"        onclick="go('map')">       <span class="ico">🗺️</span>Карта</button>
+  </nav>
+
+  <!-- ── CONTENT ── -->
+  <div class="content">
+
+    <!-- Bird + bubble -->
+    <div class="bird-panel">
+      <div class="bird-wrap">
+        <svg class="bird-svg" viewBox="0 0 120 128" xmlns="http://www.w3.org/2000/svg" onclick="chirp()">
+          <!-- branch -->
+          <path d="M8 112 Q60 106 112 110" stroke="#7a5c3e" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+          <path d="M52 112 Q50 120 44 126" stroke="#7a5c3e" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M68 111 Q70 119 75 125" stroke="#7a5c3e" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <!-- tail -->
+          <ellipse cx="88" cy="95" rx="19" ry="6.5" fill="#7a8f3a" transform="rotate(28 88 95)"/>
+          <ellipse cx="90" cy="91" rx="15" ry="4.5" fill="#8fa042" transform="rotate(22 90 91)"/>
+          <!-- body -->
+          <ellipse cx="60" cy="85" rx="33" ry="27" fill="#8ea545"/>
+          <!-- belly -->
+          <ellipse cx="54" cy="93" rx="21" ry="16" fill="#c9c86a"/>
+          <!-- wing -->
+          <path d="M73 78 Q92 70 90 91 Q78 96 67 87Z" fill="#6b7934"/>
+          <path d="M73 80 Q88 73 86 89" stroke="#8fa042" stroke-width="1.5" fill="none"/>
+          <path d="M71 84 Q86 77 84 93" stroke="#8fa042" stroke-width="1.5" fill="none"/>
+          <!-- head -->
+          <ellipse cx="44" cy="64" rx="23" ry="21" fill="#9ab04f"/>
+          <!-- crown blacks -->
+          <path d="M32 56 Q44 46 57 54" stroke="#1a1a1a" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+          <path d="M34 61 Q44 51 56 59" stroke="#1a1a1a" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+          <!-- crown gold -->
+          <path d="M33 58.5 Q44 48.5 56.5 56.5" stroke="#f5c518" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+          <!-- cheek -->
+          <ellipse cx="37" cy="70" rx="12" ry="9" fill="#b8c660"/>
+          <!-- eye -->
+          <circle cx="36" cy="64" r="4.2" fill="#111"/>
+          <circle cx="37.4" cy="62.6" r="1.3" fill="white"/>
+          <!-- beak -->
+          <path d="M24 66 L15 64 L24 70Z" fill="#4a4a4a"/>
+          <!-- feet -->
+          <path d="M50 111 L46 114 M50 111 L50 115 M50 111 L54 114" stroke="#8b6a3e" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M66 110 L62 113 M66 110 L66 114 M66 110 L70 113" stroke="#8b6a3e" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>
+        <div class="bird-name">Желтоголовый королёк</div>
+      </div>
+
+      <div class="bubble">
+        <div class="bubble-tag" id="btag">Привет!</div>
+        <div class="bubble-text" id="btext">
+          Чирик! Я — желтоголовый королёк, маленький житель хакасской тайги! Нажми на раздел слева, и я расскажу тебе всё о моей республике. <strong>Ахухвау!</strong> 🌲
+        </div>
+      </div>
+    </div>
+
+    <!-- ── WELCOME CARD ── -->
+    <div class="card on" id="card-welcome">
+      <div class="card-title">🌿 Республика Хакасия</div>
+      <div class="card-body">
+        <div class="stats">
+          <div class="stat"><span class="stat-n">61 569</span><span class="stat-l">км² — площадь</span></div>
+          <div class="stat"><span class="stat-n">~530 тыс.</span><span class="stat-l">жителей (2021)</span></div>
+          <div class="stat"><span class="stat-n">Абакан</span><span class="stat-l">столица республики</span></div>
+          <div class="stat"><span class="stat-n">5</span><span class="stat-l">городов в республике</span></div>
+        </div>
+        <p>Республика расположена в Южной Сибири. Граничит на востоке с <strong>Красноярским краем</strong>, на западе с <strong>Кемеровской областью</strong>, на юге с <strong>Республикой Алтай</strong> и <strong>Республикой Тыва</strong>.</p>
+        <div class="hl">Официальный туристический слоган: <strong>«Хакасия. Земля пяти стихий»</strong>.<br>И народный вариант: <em>«Хакасия — это ах! Это ух! Это вау! Ахухвау!»</em></div>
+        <p>Выбирай любой раздел слева — королёк всё расскажет!</p>
+      </div>
+    </div>
+
+    <!-- ── HISTORY ── -->
+    <div class="card" id="card-history">
+      <div class="card-title">📜 История вхождения в состав России</div>
+      <div class="card-body">
+        <p>Ключевым фоном была <strong>борьба Русского царства</strong> против союза енисейских кыргызов (Хонгорай) и Джунгарского ханства.</p>
+        <ul class="tl">
+          <li><span class="yr">1703</span><span>Джунгары насильственно угнали большую часть населения Хонгорая в свои степи — сопротивление ослабло</span></li>
+          <li><span class="yr">1707</span><span>Пётр I подписал указ о строительстве <strong>Абаканского острога</strong> — фактическое начало вхождения</span></li>
+          <li><span class="yr">1718</span><span>Возведён <strong>Саянский острог</strong> на южной границе — закрепление русских земель</span></li>
+          <li><span class="yr">20 авг. 1727</span><span>Заключён российско-китайский пограничный тракт: земли к северу от Саян — России, к югу — Китаю. <strong>Официальное закрепление</strong></span></li>
+          <li><span class="yr">1758</span><span>После китайского вторжения на Алтай царское правительство срочно разместило <strong>казачьи гарнизоны</strong> — фактическое закрепление</span></li>
+          <li><span class="yr">1822</span><span>На территории насчитывалось <strong>90 русских поселений</strong> — редкость для Сибири</span></li>
+        </ul>
+        <div class="hl">Свободная территория и слабый государственный контроль привлекали переселенцев — в том числе <strong>старообрядцев</strong>, спасавшихся от репрессий.</div>
+      </div>
+    </div>
+
+    <!-- ── RESOURCES ── -->
+    <div class="card" id="card-resources">
+      <div class="card-title">⛏️ Природные ресурсы</div>
+      <div class="card-body">
+        <p>В XVII–XVIII веках активно осваивались <strong>золото, железо, соль, пушнина</strong>. Хакасско-Минусинская котловина обладала пригодными для земледелия землями.</p>
+        <p>В <strong>советский период</strong> главными стали каменный уголь и сельскохозяйственная продукция, перевозившиеся по Транссибу. В XX веке построены крупнейшие предприятия:</p>
+        <ul>
+          <li><strong>Саянский алюминиевый завод</strong> (ныне РУСАЛ Саяногорск)</li>
+          <li><strong>Абаканвагонмаш</strong> — вагоностроение</li>
+          <li><strong>Сорский молибденовый комбинат</strong> — единственный в России</li>
+          <li><strong>Железные рудники</strong> в горной части республики</li>
+        </ul>
+        <div class="hl">Именно эти предприятия превратили Хакасию из <strong>аграрного</strong> в <strong>индустриальный регион</strong>. Ключевую роль сыграла дешёвая электроэнергия Саяно-Шушенской ГЭС.</div>
+      </div>
+    </div>
+
+    <!-- ── CLIMATE ── -->
+    <div class="card" id="card-climate">
+      <div class="card-title">🌡️ Климат</div>
+      <div class="card-body">
+        <p>Климат — <strong>резко континентальный</strong>: значительные температурные перепады между зимой и летом.</p>
+        <div class="stats">
+          <div class="stat"><span class="stat-n">−19…−21°С</span><span class="stat-l">средняя зимняя t° в котловинах</span></div>
+          <div class="stat"><span class="stat-n">до −52°С</span><span class="stat-l">абсолютный минимум</span></div>
+          <div class="stat"><span class="stat-n">18–24°С</span><span class="stat-l">средняя летняя t° (июнь–авг.)</span></div>
+          <div class="stat"><span class="stat-n">~300 мм</span><span class="stat-l">годовая норма осадков</span></div>
+        </div>
+        <ul>
+          <li><strong>Зима</strong> — длительная, холодная, сухая. Снежный покров устанавливается к началу ноября</li>
+          <li><strong>Лето</strong> — тёплое, местами до +38°С. Лучшее время для туризма и сельского хозяйства</li>
+          <li><strong>Весна</strong> — короткая, ночные заморозки до −3°С, усложняет сельхозработы</li>
+          <li><strong>Осень</strong> — сухая, солнечная, 8–10 дождливых дней в месяц</li>
+        </ul>
+        <div class="hl">55–70% годовых осадков выпадает <strong>летом</strong> в виде ливней. В предгорьях и горах норма вырастает до <strong>600–700 мм</strong>. Самое комфортное время — <strong>июнь и июль</strong>.</div>
+      </div>
+    </div>
+
+    <!-- ── POPULATION ── -->
+    <div class="card" id="card-population">
+      <div class="card-title">👥 Население</div>
+      <div class="card-body">
+        <div class="stats">
+          <div class="stat"><span class="stat-n">411 тыс.</span><span class="stat-l">жителей в 1959 г.</span></div>
+          <div class="stat"><span class="stat-n">568 тыс.</span><span class="stat-l">жителей в 1989 г. (пик)</span></div>
+          <div class="stat"><span class="stat-n">34,6%</span><span class="stat-l">доля Абакана в нас. республики (2021)</span></div>
+          <div class="stat"><span class="stat-n">68,4%</span><span class="stat-l">урбанизация в 2021 г.</span></div>
+        </div>
+        <p>Население <strong>росло в советский период</strong> за счёт промышленного освоения и миграции. После распада СССР началось устойчивое сокращение, которое впоследствии стабилизировалось.</p>
+        <div class="hl">Доля Абакана постоянно растёт: <strong>13,7% в 1959 г. → 34,6% в 2021 г.</strong> Признак сильной концентрации населения в столице при оттоке из малых городов.</div>
+        <p>Пик урбанизации — <strong>72,49% в 1989 г.</strong> К 2021 г. показатель снизился до 68,4%, тогда как общероссийский достиг 74,79%.</p>
+        <p>Доля пустых сельских населённых пунктов — лишь <strong>2,58%</strong> (против 16,16% по России). Это объясняется молодостью освоения и сильными традициями сельской жизни (аалы и др.).</p>
+      </div>
+    </div>
+
+    <!-- ── ECONOMY ── -->
+    <div class="card" id="card-economy">
+      <div class="card-title">🏭 Экономика</div>
+      <div class="card-body">
+        <p>Промышленность формирует около <strong>50% ВРП</strong>. Три взаимосвязанных кластера — основа:</p>
+        <div class="stats">
+          <div class="stat"><span class="stat-n">⛏️ Уголь</span><span class="stat-l">Минусинский угольный бассейн, СУЭК</span></div>
+          <div class="stat"><span class="stat-n">🔩 Алюминий</span><span class="stat-l">Саяногорский алюм. завод, РУСАЛ</span></div>
+          <div class="stat"><span class="stat-n">⚡ Энергия</span><span class="stat-l">Саяно-Шушенская ГЭС — самая мощная в России</span></div>
+          <div class="stat"><span class="stat-n">~4%</span><span class="stat-l">доля сельского хозяйства в ВРП</span></div>
+        </div>
+        <p>В республике <strong>6 официальных моногородов</strong> — при том, что городов всего 5 (80% городов — моногорода).</p>
+        <div class="cities">
+          <div class="city">
+            <h4>Черногорск (76 тыс.)</h4>
+            <p>СУЭК Хакасия (уголь). Близость к Абакану даёт частичную альтернативную занятость</p>
+          </div>
+          <div class="city">
+            <h4>Саяногорск (55 тыс.)</h4>
+            <p>РУСАЛ (алюминий) + Саяно-Шушенская ГЭС. Санкции ударили по экспорту алюминия</p>
+          </div>
+          <div class="city bad">
+            <h4>Сорск (13 тыс.) ⚠️</h4>
+            <p>Единственный в России комплекс по добыче молибдена. Под угрозой консервации. 80% бюджета — от одного предприятия</p>
+          </div>
+          <div class="city bad">
+            <h4>Абаза (17 тыс.) ⚠️</h4>
+            <p>Абаканский рудник (железная руда). Изолирован в горах. Альтернатив занятости нет</p>
+          </div>
+        </div>
+        <div class="hl">Высокая концентрация моногородов — <strong>наследие советского ресурсного освоения</strong>. Большинство уязвимы к санкциям. Реальная диверсификация — только у Черногорска.</div>
+      </div>
+    </div>
+
+    <!-- ── FAILED PROJECTS ── -->
+    <div class="card" id="card-projects">
+      <div class="card-title">🏗️ Несостоявшиеся проекты</div>
+      <div class="card-body">
+        <p>В 1970–80-е гг. Хакасия рассматривалась как важная база <strong>Саянского территориально-производственного комплекса</strong>. Саяно-Шушенская ГЭС должна была дать энергию для десятков предприятий. Распад СССР оставил многое нереализованным.</p>
+        <ul>
+          <li>
+            <strong>«Абаканвагонмаш»</strong> — проектировался как крупнейший вагоностроительный завод страны. Построены огромные корпуса, но после 1991 г. оказался слишком большим для новой экономики. Сейчас на его базе работает АО «<strong>РМ Рейл Абаканвагонмаш</strong>» в холдинге «РМ Рейл»
+          </li>
+          <li>
+            <strong>Туимский завод тугоплавких и цветных металлов</strong> — обеспечивал оборонную промышленность. В 1990-е деградировал, новые цеха не достроены, завод закрыт
+          </li>
+          <li>
+            <strong>Черногорский комбинат искусственных кож</strong> — должен был производить продукцию глубокой переработки для лёгкой промышленности. Не выдержал конкуренции с дешёвым импортом и обанкротился
+          </li>
+          <li>
+            <strong>Усть-Абаканский гидролизный завод</strong> — перерабатывал древесные отходы, выпускал технический спирт и кормовые дрожжи. В постсоветский период прекратил работу, корпуса стали руинами
+          </li>
+        </ul>
+        <div class="hl">Все эти проекты объединяет одно: советская логика глубокой переработки местного сырья столкнулась с рыночной реальностью 1990-х — и проиграла.</div>
+      </div>
+    </div>
+
+    <!-- ── HERITAGE ── -->
+    <div class="card" id="card-heritage">
+      <div class="card-title">🏛️ Культурное наследие</div>
+      <div class="card-body">
+        <p>В Хакасии <strong>более 100 объектов культурного наследия федерального значения</strong>: курганы, писаницы, каменные изваяния, древние поселения.</p>
+        <div class="hl">Горный массив <strong>«Оглахты»</strong> заповедника «Хакасский» — единственный претендент на список Всемирного наследия ЮНЕСКО. В <strong>2016 г.</strong> включён в предварительный список, в <strong>2017 г.</strong> заповедник получил статус <strong>биосферного резервата ЮНЕСКО</strong>.<br><small>Источник: zapovednik-khakassky.ru</small></div>
+        <div class="sites">
+          <div class="site">
+            <div class="site-ico">🗿</div>
+            <div class="site-text">
+              <h4>Салбыкский курган</h4>
+              <p>Крупный монументальный курган сармато-аланской культуры (V–III вв. до н. э.). Масштаб и архитектура подчёркивают религиозно-политическое значение памятника</p>
+            </div>
+          </div>
+          <div class="site">
+            <div class="site-ico">🪨</div>
+            <div class="site-text">
+              <h4>Боярская писаница</h4>
+              <p>Наскальные изображения бронзового и раннего железного веков: сцены охоты, ритуалов и фантастических существ</p>
+            </div>
+          </div>
+          <div class="site">
+            <div class="site-ico">🏰</div>
+            <div class="site-text">
+              <h4>Крепость «Чебаки»</h4>
+              <p>Горное сооружение бронзовой эпохи с каменными стенами и жилыми нишами. Найдена керамика окуневской культуры. Сочетало черты крепости, убежища и культового места</p>
+            </div>
+          </div>
+          <div class="site">
+            <div class="site-ico">⛩️</div>
+            <div class="site-text">
+              <h4>Уйбатский Чаа-тас</h4>
+              <p>Погребальный комплекс с курганами от VII в. до н. э. до IX в. н. э. Многоугольные ограждения из плит и высокие стелы отражают социальное устройство древних кыргызов</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── BRANDING ── -->
+    <div class="card" id="card-branding">
+      <div class="card-title">✨ Региональный брендинг</div>
+      <div class="card-body">
+        <p>Брендинг строится вокруг образа <strong>«земли стихий»</strong> — сочетание природы, древней истории и туристической привлекательности. Официально используются два направления:</p>
+        <div class="hl">
+          🏔️ <strong>«Хакасия. Земля пяти стихий»</strong> — туристический бренд (2020 г.)<br>
+          🏷️ <strong>«Сделано в Хакасии»</strong> — знак качества местных производителей
+        </div>
+        <p><strong>«Земля пяти стихий»</strong> закрепляет за регионом образ территории, где соединяются <em>степи, озёра, горы, археологические памятники и традиционная культура</em>. Продаётся не отдельный объект, а целостное впечатление от региона.</p>
+        <p><strong>«Сделано в Хакасии»</strong> — знак разрешается бесплатно размещать местным производителям на товарах, транспорте, одежде и документации. Работает как символ местного происхождения и доверия.</p>
+        <div class="hl">Народный слоган, ставший вирусным: <strong>«Хакасия — это ах! Это ух! Это вау! Ахухвау!»</strong> 😄<br><small>Источник: svoboda.org, gazeta19.ru</small></div>
+      </div>
+    </div>
+
+    <!-- ── MAP ── -->
+    <div class="card" id="card-map">
+      <div class="card-title">🗺️ Интерактивная карта Хакасии</div>
+      <div class="card-body">
+        <div id="map"></div>
+        <div class="map-legend">
+          <strong style="color:var(--text-m);font-size:.8rem">Обозначения:</strong>
+          <span class="leg-item"><span class="leg-dot" style="background:#c0392b"></span>Столица</span>
+          <span class="leg-item"><span class="leg-dot" style="background:#2d5a27"></span>Моногород (стаб.)</span>
+          <span class="leg-item"><span class="leg-dot" style="background:#e67e22"></span>Моногород (сложн.)</span>
+          <span class="leg-item"><span class="leg-dot" style="background:#5b8dd9"></span>Прочие города/пгт</span>
+        </div>
+        <p class="map-note">Нажимай на маркеры — королёк расскажет о каждом городе из доклада!</p>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /wrap -->
+
+<footer>
+  Интерактивный доклад по географии · Республика Хакасия · Данные из официальных источников
+</footer>
+
+<script>
+const msgs = {
+  welcome:    {tag:'Привет!',       txt:'Чирик! Я — желтоголовый королёк, маленький житель хакасской тайги! Нажми на раздел слева, и я расскажу тебе всё о моей республике. <strong>Ахухвау!</strong> 🌲'},
+  history:    {tag:'История',       txt:'Хакасия вошла в состав России непросто! Сначала джунгары ослабили Хонгорай, потом Пётр I воспользовался ситуацией. Официально — с <strong>20 августа 1727 года</strong>. Долгий путь, чирик-чик! 📜'},
+  resources:  {tag:'Ресурсы',       txt:'Богатств здесь хватает: золото, уголь, молибден, алюминий... В советское время из аграрного края сделали настоящий <strong>индустриальный регион</strong>! Чирик! ⛏️'},
+  climate:    {tag:'Климат',        txt:'Климат у нас резко континентальный! Зима до <strong>−52°С</strong>, зато лето — тёплое и солнечное. Лучшее время приехать — <strong>июнь и июль</strong>. Я как раз тогда особенно звонко пою! 🎵'},
+  population: {tag:'Население',     txt:'В советское время нас было <strong>568 тысяч</strong>! Потом стало меньше... Зато Абакан растёт — его доля уже <strong>34,6%</strong> населения республики. Как птицы тянутся к тёплым местам! 🐦'},
+  economy:    {tag:'Экономика',     txt:'Три кита нашей экономики: <strong>уголь, алюминий и гидроэнергия</strong>! Саяно-Шушенская ГЭС — самая мощная в России! Но у нас 6 моногородов из 5... звучит странно? Читай карточку! ⚡'},
+  projects:   {tag:'Несост. проекты',txt:'В советское время были большие планы: вагоностроение, тугоплавкие металлы, кожевенное производство... Распад СССР всё остановил. Грустно, как пустое гнездо осенью... 🍂'},
+  heritage:   {tag:'Культ. наследие',txt:'Ах, как я люблю петь над древними курганами! <strong>Оглахты</strong> — претендент на ЮНЕСКО! <strong>Салбыкский курган, Боярская писаница</strong>... 100+ памятников федерального значения! 🏛️'},
+  branding:   {tag:'Брендинг',      txt:'Знаешь наш девиз? <strong>«Земля пяти стихий»</strong>! И народный: «Ах! Ух! Вау! <strong>Ахухвау!</strong>» — прямо как я пою каждое утро! А ещё «Сделано в Хакасии» — гордость местных! ✨'},
+  map:       {tag:'Карта республики', txt:'Чирик! Посмотри, где я живу! Нажимай на маркеры — расскажу о каждом городе из нашего доклада. Красный — столица <strong>Абакан</strong>, оранжевые — моногорода в сложном положении! 🗺️'}
+};
+
+function go(id) {
+  document.querySelectorAll('.tbtn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + id).classList.add('active');
+
+  const m = msgs[id];
+  document.getElementById('btag').textContent = m.tag;
+  const btext = document.getElementById('btext');
+  btext.style.opacity = 0;
+  setTimeout(() => { btext.innerHTML = m.txt; btext.style.opacity = 1; }, 180);
+
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('on'));
+  const card = document.getElementById('card-' + id);
+  if (card) card.classList.add('on');
+
+  // re-trigger bounce
+  const s = document.querySelector('.bird-svg');
+  s.style.animation = 'none';
+  setTimeout(() => s.style.animation = 'bob 2.8s ease-in-out infinite', 20);
+}
+
+function chirp() {
+  const s = document.querySelector('.bird-svg');
+  s.style.animation = 'excited .45s ease-in-out 3';
+  setTimeout(() => s.style.animation = 'bob 2.8s ease-in-out infinite', 1500);
+}
+
+document.getElementById('card-welcome').classList.add('on');
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+var mapInit = false;
+
+function initMap() {
+  if (mapInit) return;
+  mapInit = true;
+
+  var map = L.map('map', {scrollWheelZoom: true}).setView([53.55, 90.5], 7);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 13
+  }).addTo(map);
+
+  // Load real boundary from Nominatim (OpenStreetMap)
+  var borderLayer = null;
+  var loadingDiv = document.createElement('div');
+  loadingDiv.id = 'map-loading';
+  loadingDiv.style.cssText = 'position:absolute;bottom:12px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(255,255,255,.92);padding:5px 14px;border-radius:20px;font-size:.78rem;color:#2d5a27;font-family:Geologica,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.15)';
+  loadingDiv.textContent = '🐦 Загружаю границы Хакасии...';
+  document.getElementById('map').appendChild(loadingDiv);
+
+  fetch('https://nominatim.openstreetmap.org/search?q=Республика+Хакасия&format=geojson&polygon_geojson=1&limit=1&countrycodes=ru', {
+    headers: {'Accept-Language': 'ru', 'User-Agent': 'KhakassiaGeoReport/1.0'}
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    loadingDiv.remove();
+    if (!data.features || !data.features.length) return;
+    borderLayer = L.geoJSON(data.features[0], {
+      style: {
+        color: '#2d5a27', weight: 2.5,
+        fillColor: '#a8d5a2', fillOpacity: 0.22,
+        dashArray: '6,4'
+      }
+    }).addTo(map);
+    borderLayer.bindPopup('<div class="pop-title">Республика Хакасия</div><span class="pop-tag">Площадь: 61 569 км²</span><br>Субъект РФ с 1992 г. Столица — Абакан.');
+  })
+  .catch(function(){
+    loadingDiv.textContent = '⚠️ Не удалось загрузить границы';
+    setTimeout(function(){ loadingDiv.remove(); }, 3000);
+  });
+
+  function mkIcon(color) {
+    return L.divIcon({
+      className:'',
+      html:'<div style="width:14px;height:14px;border-radius:50%;background:'+color+';border:2.5px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,.35)"></div>',
+      iconSize:[14,14], iconAnchor:[7,7], popupAnchor:[0,-10]
+    });
+  }
+
+  var cities = [
+    {
+      ll:[53.7209,91.4422], color:'#c0392b', name:'Абакан',
+      tag:'Столица республики', tagClass:'',
+      info:'Столица Республики Хакасия. Доля в населении республики выросла с <b>13,7%</b> (1959 г.) до <b>34,6%</b> (2021 г.) — признак концентрации населения в региональном центре.'
+    },
+    {
+      ll:[53.8167,91.2833], color:'#2d5a27', name:'Черногорск',
+      tag:'Моногород — стабильное положение', tagClass:'',
+      info:'76 тыс. жителей. <b>СУЭК Хакасия</b> (уголь). В 1990-е утратил непрофильные производства, но близость к Абакану даёт частичную альтернативную занятость.'
+    },
+    {
+      ll:[53.0828,91.4141], color:'#2d5a27', name:'Саяногорск',
+      tag:'Моногород — стабильное положение', tagClass:'',
+      info:'55 тыс. жителей. <b>РУСАЛ</b> (алюминий) + <b>Саяно-Шушенская ГЭС</b> — самая мощная в России, дающая дешёвую электроэнергию. Санкции ударили по экспорту алюминия.'
+    },
+    {
+      ll:[54.003,90.255], color:'#e67e22', name:'Сорск',
+      tag:'Моногород — сложное положение ⚠️', tagClass:'warn',
+      info:'13 тыс. жителей. <b>Единственный в России</b> комплекс по добыче и переработке молибдена. ~80% бюджета от одного предприятия. Под угрозой консервации.'
+    },
+    {
+      ll:[52.6539,90.0867], color:'#e67e22', name:'Абаза',
+      tag:'Моногород — сложное положение ⚠️', tagClass:'warn',
+      info:'17 тыс. жителей. <b>Абаканский рудник</b> (железная руда). Изолирован в горах, тяжёлая транспортная доступность, альтернатив занятости нет.'
+    },
+    {
+      ll:[54.38,89.81], color:'#e67e22', name:'Туим (пгт)',
+      tag:'Моногород — сложное положение ⚠️', tagClass:'warn',
+      info:'В советское время — <b>Туимский завод тугоплавких и цветных металлов</b>. После 1990-х завод закрыт, новые цеха остались недостроенными. Включён в перечень моногородов.'
+    },
+    {
+      ll:[54.058,90.686], name:'Сонский / Вершина Тёи',
+      color:'#e67e22', tag:'Моногород — сложное положение ⚠️', tagClass:'warn',
+      info:'пгт <b>Вершина Тёи</b> относится к моногородам с наиболее сложным социально-экономическим положением по данным Минэкономразвития РФ.'
+    },
+    {
+      ll:[54.495,90.194], color:'#5b8dd9', name:'Шира',
+      tag:'Посёлок городского типа', tagClass:'',
+      info:'Районный центр Ширинского района. Известен близостью к <b>солёным озёрам</b> — популярный рекреационный объект и туристический кластер республики.'
+    },
+    {
+      ll:[54.78,89.72], color:'#5b8dd9', name:'Копьево',
+      tag:'Посёлок', tagClass:'',
+      info:'Административный центр Орджоникидзевского района в северной части республики.'
+    },
+    {
+      ll:[54.33,89.73], color:'#5b8dd9', name:'Коммунар',
+      tag:'Посёлок городского типа', tagClass:'',
+      info:'Населённый пункт в Орджоникидзевском районе. Добыча полезных ископаемых.'
+    },
+    {
+      ll:[53.14,90.55], color:'#5b8dd9', name:'Аскиз',
+      tag:'Районный центр', tagClass:'',
+      info:'Центр <b>Аскизского района</b> — одного из крупнейших и наиболее хакасских по этническому составу районов республики. Важный культурный центр хакасского народа.'
+    },
+    {
+      ll:[52.42,91.38], color:'#5b8dd9', name:'Черемушки',
+      tag:'Посёлок', tagClass:'',
+      info:'Посёлок при <b>Саяно-Шушенской ГЭС</b> — самой мощной гидроэлектростанции России (6 400 МВт). ГЭС обеспечивает дешёвой электроэнергией алюминиевое производство Саяногорска.'
+    },
+  ];
+
+  cities.forEach(function(c) {
+    L.marker(c.ll, {icon: mkIcon(c.color)}).addTo(map)
+      .bindPopup(
+        '<div class="pop-title">' + c.name + '</div>' +
+        '<span class="pop-tag ' + c.tagClass + '">' + c.tag + '</span><br>' +
+        c.info
+      );
+  });
+
+  // Saiano-Shushenskaya GES marker (star shape)
+  L.marker([52.83, 91.37], {
+    icon: L.divIcon({
+      className:'',
+      html:'<div style="font-size:20px;line-height:1;filter:drop-shadow(0 1px 3px rgba(0,0,0,.4))">⚡</div>',
+      iconSize:[20,20], iconAnchor:[10,10], popupAnchor:[0,-10]
+    })
+  }).addTo(map).bindPopup(
+    '<div class="pop-title">Саяно-Шушенская ГЭС</div>' +
+    '<span class="pop-tag">Самая мощная ГЭС России</span><br>' +
+    'Установленная мощность — <b>6 400 МВт</b>. Обеспечивает дешёвой электроэнергией весь алюминиевый кластер Саяногорска. Один из трёх ключевых экономических кластеров Хакасии.'
+  );
+
+  // Oглахты label
+  L.marker([53.47, 91.17], {
+    icon: L.divIcon({
+      className:'',
+      html:'<div style="font-size:18px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.4))">🏛️</div>',
+      iconSize:[18,18], iconAnchor:[9,9], popupAnchor:[0,-10]
+    })
+  }).addTo(map).bindPopup(
+    '<div class="pop-title">Горный массив Оглахты</div>' +
+    '<span class="pop-tag">Претендент на ЮНЕСКО</span><br>' +
+    'Скальные петроглифы заповедника «Хакасский». В <b>2016 г.</b> включён в предварительный список Всемирного наследия ЮНЕСКО. В <b>2017 г.</b> заповедник получил статус биосферного резервата ЮНЕСКО.'
+  );
+
+  // Salbyky Kurgan
+  L.marker([53.97, 90.60], {
+    icon: L.divIcon({
+      className:'',
+      html:'<div style="font-size:18px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.4))">🗿</div>',
+      iconSize:[18,18], iconAnchor:[9,9], popupAnchor:[0,-10]
+    })
+  }).addTo(map).bindPopup(
+    '<div class="pop-title">Салбыкский курган</div>' +
+    '<span class="pop-tag">Объект культурного наследия</span><br>' +
+    'Крупный монументальный курган сармато-аланской культуры (<b>V–III вв. до н. э.</b>). Масштаб и архитектура подчёркивают его религиозно-политическое значение.'
+  );
+}
+
+// Intercept go() to init map on first open
+var _goOrig = go;
+go = function(id) {
+  _goOrig(id);
+  if (id === 'map') {
+    setTimeout(initMap, 80);
+  }
+};
+</script>
+</body>
+</html>
