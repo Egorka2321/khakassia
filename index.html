@@ -35,6 +35,15 @@
     overflow-x: hidden;
   }
 
+  /* === FLAG BACKGROUND OVERLAY === */
+  #bgFlag {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    z-index: -1; pointer-events: none;
+    opacity: 0;
+    background-color: #d0f0d8;
+  }
+  .hero { transition: background 2.5s ease; }
+
   /* === HERO === */
   .hero {
     background: linear-gradient(160deg, #1b4332 0%, #2d6a4f 40%, #40916c 70%, #74b9d4 100%);
@@ -565,10 +574,13 @@
 </head>
 <body>
 
+<!-- FLAG BACKGROUND OVERLAY -->
+<div id="bgFlag"></div>
+
 <!-- HERO -->
 <div class="hero">
   <div class="stars" id="stars"></div>
-  <div class="hero-badge">🏔️ Соц.-эк. география России</div>
+  <div class="hero-badge">🏔️ Социально-экономическая география России</div>
   <h1>Республика Хакасия</h1>
   <p class="hero-sub">Виртуальный гид · Земля пяти стихий</p>
   <svg class="mountains-svg" viewBox="0 0 500 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -966,7 +978,7 @@
 </div>
 
 <footer>
-  Сделано для урока географии · Данные из доклада группы · <span>Республика Хакасия 🌿</span>
+  Социально-экономическая география России · Данные из доклада группы · <span>Республика Хакасия 🌿</span>
 </footer>
 
 <script>
@@ -1003,9 +1015,55 @@
     if (duration) setTimeout(() => setMood('normal'), duration);
   }
 
-  function setSpeech(html, mood, badgeDuration) {
+  const bgFlag = document.getElementById('bgFlag');
+  const heroEl = document.querySelector('.hero');
+
+  // Flag colors (soft, не кричащие)
+  const flagColors = [
+    { bg: '#d0f0d8', hero: 'linear-gradient(160deg, #1b6a20 0%, #2d8a4f 40%, #52b788 70%, #74b9d4 100%)' }, // зелёный
+    { bg: '#c8dcf4', hero: 'linear-gradient(160deg, #1a3a7a 0%, #1a5ea8 40%, #4a8ad4 70%, #74b9d4 100%)' }, // синий
+    { bg: '#f2f2f2', hero: 'linear-gradient(160deg, #2a5a3a 0%, #3a7a5a 40%, #60a880 70%, #a0d4c0 100%)' }, // белый
+    { bg: '#f5ccc8', hero: 'linear-gradient(160deg, #6a1010 0%, #c0281a 40%, #d45a40 70%, #74b9d4 100%)' }, // красный
+    { bg: '#f5e8c0', hero: 'linear-gradient(160deg, #7a5a00 0%, #c89010 40%, #d4a830 70%, #74b9d4 100%)' }, // золотой
+  ];
+
+  let flagInterval = null;
+  let flagColorIdx = 0;
+  let flagActive = false;
+
+  function applyFlagColor(idx) {
+    const c = flagColors[idx];
+    bgFlag.style.transition = 'background-color 2.5s ease, opacity 1.5s ease';
+    bgFlag.style.backgroundColor = c.bg;
+    heroEl.style.transition = 'background 2.5s ease';
+    heroEl.style.background = c.hero;
+  }
+
+  function setFlagMode(on) {
+    if (on && !flagActive) {
+      flagActive = true;
+      bgFlag.style.opacity = '0.55';
+      applyFlagColor(0);
+      flagColorIdx = 1;
+      flagInterval = setInterval(() => {
+        applyFlagColor(flagColorIdx);
+        flagColorIdx = (flagColorIdx + 1) % flagColors.length;
+      }, 3000);
+    } else if (!on && flagActive) {
+      flagActive = false;
+      clearInterval(flagInterval);
+      flagInterval = null;
+      bgFlag.style.transition = 'opacity 2s ease';
+      bgFlag.style.opacity = '0';
+      heroEl.style.transition = 'background 2.5s ease';
+      heroEl.style.background = 'linear-gradient(160deg, #1b4332 0%, #2d6a4f 40%, #40916c 70%, #74b9d4 100%)';
+    }
+  }
+
+  function setSpeech(html, mood, badgeDuration, flagMode) {
     speechText.innerHTML = html;
     setMood(mood, badgeDuration);
+    setFlagMode(!!flagMode);
   }
 
   const chirpJokes = [
@@ -1030,9 +1088,10 @@
     isChirping = true;
     const joke = chirpJokes[chirpIdx % chirpJokes.length];
     chirpIdx++;
-    setSpeech(`<span style="font-size:1.05rem;color:#d4a017;font-weight:800;">${joke.chirp}</span><div class="speech-hint" style="margin-top:0.5rem;">... 🎵</div>`, 'chirp');
+    setSpeech(`<span style="font-size:1.05rem;color:#d4a017;font-weight:800;">${joke.chirp}</span><div class="speech-hint" style="margin-top:0.5rem;">... 🎵</div>`, 'chirp', null, false);
     setTimeout(() => {
-      setSpeech(joke.punchline + `<div class="speech-hint">👇 Выбери тему или нажми снова</div>`, joke.mood, 4000);
+      const isAhuhvau = joke.punchline.includes('Ахухвау');
+      setSpeech(joke.punchline + `<div class="speech-hint">👇 Выбери тему или нажми снова</div>`, joke.mood, 4000, isAhuhvau);
       isChirping = false;
     }, 1800);
   }
@@ -1061,7 +1120,7 @@
       text: `Чирик... Грустная история. Советские мечты... 😔<br><br><span class="highlight">Абаканвагонмаш</span> должен был стать крупнейшим вагоностроительным заводом — цеха построили, но 1990-е всё сломали. <span class="highlight">Туимский завод</span> тугоплавких металлов тоже закрылся.<br><br>А <span class="highlight">гидролизный завод</span> в Усть-Абакане стал руинами. Столько надежд... 😢` },
     heritage: { label: '🗿 Наследие', mood: 'happy',
       text: `Чирик! Я живу среди тысячелетней истории! 🗿<br><br><span class="highlight">«Оглахты»</span> — в предварительном списке ЮНЕСКО с 2016 года! Петроглифы бронзового века — тысячи фигур!<br><br>Здесь больше <span class="number">100 памятников</span> федерального значения. <span class="highlight">Салбыкский курган</span> (V–III вв. до н.э.), <span class="highlight">Боярская писаница</span>, крепость <span class="highlight">«Чебаки»</span>! 🎉` },
-    brand: { label: '✨ Брендинг', mood: 'happy',
+    brand: { label: '✨ Брендинг', mood: 'happy', flagMode: true,
       text: `Чирик! Хакасия решила заявить о себе миру! 🌿<br><br>С 2020 года работает бренд <span class="highlight">«Земля пяти стихий»</span>. И главный слоган: <span class="highlight">«Хакасия — это ах! Это ух! Это вау! Ахухвау!»</span> 😄<br><br>Плюс знак <span class="highlight">«Сделано в Хакасии»</span> для местных — бесплатно как знак качества!` },
   };
 
@@ -1076,20 +1135,23 @@
     btn.classList.add('active');
     document.getElementById('panel-' + key).classList.add('visible');
     const msg = topicMessages[key];
-    setSpeech(`<div class="topic-label">${msg.label}</div>` + msg.text, msg.mood, msg.mood !== 'normal' ? 4000 : null);
+    setSpeech(`<div class="topic-label">${msg.label}</div>` + msg.text, msg.mood, msg.mood !== 'normal' ? 4000 : null, msg.flagMode);
     document.getElementById('panel-' + key).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   function birdGreet() {
     if (isChirping) return;
     clickCount++;
+    // «Ахухвау» greeting triggers flag mode
     if (clickCount % 3 === 0) { doChirpJoke(); return; }
     const g = greetings[greetIdx % greetings.length];
     greetIdx++;
-    setSpeech(g.text + `<div class="speech-hint">👇 Нажми на тему или кликни снова</div>`, g.mood, g.mood !== 'normal' ? 4000 : null);
+    const isAhuhvau = g.text.includes('Ахухвау');
+    setSpeech(g.text + `<div class="speech-hint">👇 Нажми на тему или кликни снова</div>`, g.mood, g.mood !== 'normal' ? 4000 : null, isAhuhvau);
   }
 
   setMood('normal');
+  setFlagMode(false);
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
