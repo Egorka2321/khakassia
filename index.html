@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Республика Хакасия — Виртуальный гид</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -770,6 +771,12 @@
     </div>
   </div>
 
+  <!-- MAP -->
+  <div class="section-title">Карта Республики Хакасия</div>
+  <div style="border-radius:18px;overflow:hidden;border:2px solid #b7e4c7;box-shadow:0 4px 20px rgba(45,106,79,0.12);margin-bottom:2rem;">
+    <div id="map" style="height:420px;width:100%;"></div>
+  </div>
+
   <!-- TOPICS -->
   <div class="section-title">Выбери тему для Королька</div>
   <div class="topics-grid">
@@ -830,7 +837,7 @@
         <div class="stat-chip"><strong>1727</strong><span>Официальное закрепление</span></div>
         <div class="stat-chip"><strong>1758</strong><span>Казачьи гарнизоны</span></div>
       </div>
-      <p class="source-note">По материалам доклада</p>
+      
     </div>
   </div>
 
@@ -849,7 +856,7 @@
         <div class="stat-chip" style="border-color: #7a5c38;"><strong>⚡</strong><span>Гидроэнергетика</span></div>
       </div>
       <p style="margin-top:0.75rem; font-size:0.85rem;">Ключевые советские предприятия: <span class="tag">Саянский алюминиевый завод</span> <span class="tag">Абаканвагонмаш</span> <span class="tag">Сорский молибденовый комбинат</span></p>
-      <p class="source-note">По материалам доклада</p>
+      
     </div>
   </div>
 
@@ -869,7 +876,7 @@
       <p><strong>Весна:</strong> короткая, ночные заморозки до −3°С. <strong>Осень:</strong> сухая, солнечная, 8–10 дней с моросящими дождями в месяц.</p>
       <p><strong>Осадки:</strong> около 300 мм в год на равнинах, до 600–700 мм в горах. Около 55–70% годовой нормы выпадает летом в виде ливней.</p>
       <p><em>Самое комфортное время для посещения — июнь и июль.</em></p>
-      <p class="source-note">По материалам доклада; источники: nbcrs.org, hakasiya19.ru, priroda.ru</p>
+      
     </div>
   </div>
 
@@ -886,7 +893,7 @@
       <p style="margin-top:0.75rem;"><strong>Урбанизация:</strong> относительно высокая для Сибири. Динамика: 56,3% (1959) → 72,49% пик (1989) → 68,38% (2021). При этом общероссийский показатель продолжал расти до 74,79%.</p>
       <p><strong>Доля Абакана</strong> постоянно растёт: с 13,7% (1959) до 34,6% (2021) — признак сильной концентрации населения в столице при оттоке из малых городов.</p>
       <p><strong>Сельские НП:</strong> средняя людность — 623,9 чел. Доля безлюдных НП — всего <strong>2,58%</strong> (vs. 16,16% по России) — объясняется относительной молодостью освоения и традиционным укладом жизни в аалах.</p>
-      <p class="source-note">По материалам доклада (Приложение №1)</p>
+      
     </div>
   </div>
 
@@ -905,14 +912,14 @@
         <tbody>
           <tr><td>Черногорск</td><td>76 тыс.</td><td>СУЭК Хакасия (уголь)</td><td class="status-stable">Стабильный</td></tr>
           <tr><td>Саяногорск</td><td>55 тыс.</td><td>РУСАЛ (алюминий) + ГЭС</td><td class="status-stable">Стабильный</td></tr>
-          <tr><td>Сорск</td><td>13 тыс.</td><td>Молибден (РУСАЛ)</td><td class="status-hard">Сложный</td></tr>
-          <tr><td>Абаза</td><td>17 тыс.</td><td>Железная руда</td><td class="status-hard">Сложный</td></tr>
-          <tr><td>Туим (с.)</td><td>—</td><td>—</td><td class="status-hard">Сложный</td></tr>
-          <tr><td>Вершина Тёи</td><td>—</td><td>—</td><td class="status-hard">Сложный</td></tr>
+          <tr><td>Сорск</td><td>13 тыс.</td><td>Молибден (РУСАЛ)</td><td class="status-stable">Стабильный</td></tr>
+          <tr><td>Абаза</td><td>17 тыс.</td><td>Железная руда (Абаканский рудник)</td><td class="status-hard">Сложный</td></tr>
+          <tr><td>Туим (с.)</td><td>~2 тыс.</td><td>Цветные металлы (завод закрыт в 2012)</td><td class="status-hard">Сложный</td></tr>
+          <tr><td>Вершина Тёи</td><td>~3 тыс.</td><td>Железная руда (Тёйский рудник)</td><td class="status-hard">Сложный</td></tr>
         </tbody>
       </table>
       <p style="margin-top:0.75rem; font-size:0.85rem;">Реальная диверсификация есть лишь у Черногорска — за счёт близости к Абакану.</p>
-      <p class="source-note">По материалам доклада; источники: cyberleninka.ru, urban3p.ru</p>
+      
     </div>
   </div>
 
@@ -925,7 +932,7 @@
       <p>🔩 <strong>Туимский завод тугоплавких металлов</strong> (Ширинский район) — в советское время снабжал оборонную промышленность. После сокращения госзаказов в 1990-е деградировал и был закрыт.</p>
       <p>👜 <strong>Черногорский комбинат искусственных кож</strong> — часть советской модели «глубокой переработки» сырья. В конкуренции с дешёвым импортом оказался нежизнеспособным и обанкротился.</p>
       <p>🌲 <strong>Усть-Абаканский гидролизный завод</strong> — перерабатывал древесные отходы, выпускал технический спирт и кормовые дрожжи. В постсоветский период закрылся, корпуса превратились в руины.</p>
-      <p class="source-note">По материалам доклада; источники: rmrail.ru, cyberleninka.ru и др.</p>
+      
     </div>
   </div>
 
@@ -940,7 +947,7 @@
       <p>🎨 <strong>Боярская писаница</strong> — скальный памятник с наскальными изображениями бронзового и раннего железного веков: охота, ритуалы, фантастические существа.</p>
       <p>🏰 <strong>Крепость «Чебаки»</strong> — горное сооружение бронзовой эпохи, сочетает черты крепости, убежища и культового места; найдена керамика окуневской культуры.</p>
       <p>🪨 <strong>Уйбатский Чаа-тас</strong> — погребальный комплекс VII в. до н.э. — IX в. н.э. Многоугольные ограждения из плит и высокие стелы отражают социальное устройство древних кыргызов.</p>
-      <p class="source-note">По материалам доклада; источники: zapovednik-khakassky.ru, ookn19.ru</p>
+      
     </div>
   </div>
 
@@ -952,7 +959,7 @@
       <p>🌿 <strong>«Хакасия. Земля пяти стихий»</strong> — основной туристический бренд, представлен в 2020 году. Закрепляет образ территории, где соединяются степи, озёра, горы, археологические памятники и традиционная культура. Новый слоган: <em>«Хакасия — это ах! Это ух! Это вау! Ахухвау!»</em></p>
       <p>🏷️ <strong>«Сделано в Хакасии»</strong> — знак качества, который местные производители могут бесплатно размещать на товарах, транспорте, одежде и документах. Работает как символ местного происхождения и доверия к продукции.</p>
       <p>Хакасия выстраивает <strong>два взаимодополняющих образа</strong>: как туристическое пространство и как территория, где «местное» означает качество.</p>
-      <p class="source-note">По материалам доклада; источники: gazeta19.ru, madeinkhakassia.ru, svoboda.org</p>
+      
     </div>
   </div>
 
@@ -1084,5 +1091,143 @@
 
   setMood('normal');
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+  const map = L.map('map', { zoomControl: true, scrollWheelZoom: false }).setView([53.5, 90.5], 7);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 14
+  }).addTo(map);
+
+  // Fetch real Khakassia border from Nominatim
+  fetch('https://nominatim.openstreetmap.org/search?q=%D0%A0%D0%B5%D1%81%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B0+%D0%A5%D0%B0%D0%BA%D0%B0%D1%81%D0%B8%D1%8F&format=geojson&polygon_geojson=1&limit=1', {
+    headers: { 'Accept-Language': 'ru', 'User-Agent': 'SchoolGeographyProject/1.0' }
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.features && data.features.length > 0) {
+      L.geoJSON(data, {
+        style: {
+          color: '#2d6a4f',
+          weight: 2.5,
+          fillColor: '#52b788',
+          fillOpacity: 0.13,
+          dashArray: null
+        }
+      }).addTo(map);
+    }
+  })
+  .catch(() => {
+    // fallback: simplified polygon if fetch fails
+    const pts = [
+      [55.56,91.2],[55.4,91.8],[55.1,92.5],[54.7,92.7],[54.2,92.8],
+      [53.8,92.5],[53.4,92.6],[53.0,92.4],[52.5,91.8],[52.0,91.2],
+      [51.7,90.4],[51.6,89.5],[51.8,88.5],[52.2,87.9],[52.7,87.6],
+      [53.2,87.5],[53.8,87.8],[54.3,88.2],[54.9,88.5],[55.3,89.2],
+      [55.56,91.2]
+    ];
+    L.polygon(pts, { color:'#2d6a4f', weight:2.5, fillColor:'#52b788', fillOpacity:0.13 }).addTo(map);
+  });
+
+  // Icons
+  const makeIcon = (emoji, size=1.4) => L.divIcon({
+    html: `<div style="font-size:${size}rem;filter:drop-shadow(0 2px 5px rgba(0,0,0,0.35));line-height:1;">${emoji}</div>`,
+    iconSize: [30, 30], iconAnchor: [15, 28], popupAnchor: [0, -30], className: ''
+  });
+
+  const popStyle = 'font-family:Nunito,sans-serif;font-size:0.85rem;line-height:1.65;min-width:180px;';
+
+  // Cities
+  const cities = [
+    { name:'Абакан', lat:53.7203, lng:91.4424, icon:'🏙️', sz:1.8,
+      info:'<b>Столица республики</b><br>~187 тыс. жителей · 34,6% нас. республики' },
+    { name:'Черногорск', lat:53.8167, lng:91.3167, icon:'⛏️',
+      info:'<b>Моногород — стабильный</b><br>СУЭК Хакасия · уголь · 76 тыс.' },
+    { name:'Саяногорск', lat:53.1, lng:91.4, icon:'⚡',
+      info:'<b>Моногород — стабильный</b><br>РУСАЛ + Саяно-Шушенская ГЭС · 55 тыс.' },
+    { name:'Абаза', lat:52.6558, lng:90.0917, icon:'🪨',
+      info:'<b>Моногород — сложное положение</b><br>Абаканский рудник (железная руда) · 17 тыс.' },
+    { name:'Сорск', lat:54.0, lng:90.25, icon:'⚙️',
+      info:'<b>Моногород — стабильный</b><br>Сорский ГОК · молибден · РУСАЛ · 13 тыс.' },
+    { name:'Туим', lat:54.31, lng:90.05, icon:'🏚️',
+      info:'<b>Моногород — сложное положение</b><br>Завод цветных металлов (закрыт 2012)' },
+    { name:'Вершина Тёи', lat:52.77, lng:89.8, icon:'⛰️',
+      info:'<b>Моногород — сложное положение</b><br>Тёйский рудник (железная руда)' },
+  ];
+
+  cities.forEach(c => {
+    L.marker([c.lat, c.lng], { icon: makeIcon(c.icon, c.sz || 1.3) })
+      .addTo(map)
+      .bindPopup(`<div style="${popStyle}"><b style="font-size:0.95rem;">${c.name}</b><br>${c.info}</div>`, { maxWidth: 240 });
+  });
+
+  // === ПАСХАЛКИ / Easter eggs ===
+
+  // Туимский провал — знаменитая дыра в земле, туристический аттракцион
+  L.marker([54.305, 90.06], { icon: makeIcon('🕳️', 1.6) })
+    .addTo(map)
+    .bindPopup(`<div style="${popStyle}">
+      <b style="font-size:0.95rem;">🕳️ Туимский провал</b><br>
+      Огромная яма глубиной 120 м, образовавшаяся на месте обрушения медных шахт.<br>
+      <span style="color:#2d6a4f;font-weight:700;">Теперь туристический аттракцион</span> — есть зиплайн прямо над пропастью!<br>
+      <i style="color:#888;font-size:0.78rem;">«Дыра, которая кормит Туим лучше, чем завод»</i>
+    </div>`, { maxWidth: 250 });
+
+  // Салбыкский курган
+  L.marker([53.595, 91.035], { icon: makeIcon('🏛️', 1.5) })
+    .addTo(map)
+    .bindPopup(`<div style="${popStyle}">
+      <b style="font-size:0.95rem;">🏛️ Салбыкский курган</b><br>
+      V–III вв. до н.э. · сармато-аланская культура<br>
+      Высота насыпи — 11 м, диаметр — 500 м.<br>
+      <span style="color:#2d6a4f;font-weight:700;">Памятник федерального значения</span>
+    </div>`, { maxWidth: 240 });
+
+  // Саяно-Шушенская ГЭС
+  L.marker([52.826, 91.368], { icon: makeIcon('🔋', 1.5) })
+    .addTo(map)
+    .bindPopup(`<div style="${popStyle}">
+      <b style="font-size:0.95rem;">⚡ Саяно-Шушенская ГЭС</b><br>
+      Самая мощная ГЭС в России — <b>6400 МВт</b><br>
+      Даёт дешёвую энергию Саяногорскому алюминиевому заводу.<br>
+      <span style="color:#2d6a4f;font-weight:700;">Основа энергетики всей республики</span>
+    </div>`, { maxWidth: 250 });
+
+  // Озеро Шира
+  L.marker([54.50, 90.17], { icon: makeIcon('🏖️', 1.5) })
+    .addTo(map)
+    .bindPopup(`<div style="${popStyle}">
+      <b style="font-size:0.95rem;">🌊 Озеро Шира</b><br>
+      Солёное озеро с лечебными грязями.<br>
+      <span style="color:#2d6a4f;font-weight:700;">Главный курорт Хакасии</span> — едут со всей Сибири.<br>
+      <i style="color:#888;font-size:0.78rem;">Хакасские мальдивы 😄</i>
+    </div>`, { maxWidth: 240 });
+
+  // Оглахты — петроглифы ЮНЕСКО
+  L.marker([53.44, 91.08], { icon: makeIcon('🪨', 1.4) })
+    .addTo(map)
+    .bindPopup(`<div style="${popStyle}">
+      <b style="font-size:0.95rem;">🗿 Оглахты</b><br>
+      Горный массив с петроглифами бронзового и раннего железного веков.<br>
+      <span style="color:#2d6a4f;font-weight:700;">Предварительный список ЮНЕСКО с 2016 года</span><br>
+      Биосферный резерват ЮНЕСКО с 2017 г.
+    </div>`, { maxWidth: 250 });
+
+  // Карта легенда
+  const legend = L.control({ position: 'bottomright' });
+  legend.onAdd = () => {
+    const d = L.DomUtil.create('div');
+    d.style.cssText = 'background:#fff;padding:8px 12px;border-radius:10px;border:1.5px solid #b7e4c7;font-family:Nunito,sans-serif;font-size:0.78rem;line-height:1.8;box-shadow:0 2px 8px rgba(0,0,0,0.1)';
+    d.innerHTML = `<b style="color:#1b4332;">Легенда</b><br>
+      🏙️ Столица<br>⛏️⚡⚙️🪨⛰️🏚️ Моногорода<br>
+      🕳️🏛️🔋🌊🪨 Достопримечательности`;
+    return d;
+  };
+  legend.addTo(map);
+</script>
+
+
+
 </body>
 </html>
