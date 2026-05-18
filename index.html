@@ -65,6 +65,7 @@
     background: var(--curve-color, var(--cream));
     clip-path: ellipse(55% 100% at 50% 100%);
     transition: background 2.5s ease;
+    z-index: 2;
   }
 
   .star {
@@ -114,9 +115,10 @@
   /* === MOUNTAIN DECORATION === */
   .mountains-svg {
     width: 100%;
-    max-width: 500px;
-    margin: 0 auto 1rem;
+    max-width: 600px;
+    margin: 0.5rem auto -20px;
     display: block;
+    pointer-events: none;
   }
 
   /* === MAIN LAYOUT === */
