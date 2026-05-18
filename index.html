@@ -3,756 +3,1086 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Республика Хакасия — Интерактивный доклад</title>
-<link href="https://fonts.googleapis.com/css2?family=Geologica:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<title>Республика Хакасия — Виртуальный гид</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <style>
-:root {
-  --forest:      #2d5a27;
-  --forest-l:    #4a7c43;
-  --forest-d:    #1a3a16;
-  --gold:        #c8a84b;
-  --gold-b:      #f0c040;
-  --cream:       #f4ede0;
-  --cream-d:     #e9dfd0;
-  --bark:        #6b4e37;
-  --text:        #1e2d1a;
-  --text-m:      #3d5c38;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:'Geologica',sans-serif;
-  background:var(--cream);
-  color:var(--text);
-  min-height:100vh;
-}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── HEADER ─────────────────────────────── */
-header{
-  background:linear-gradient(140deg,var(--forest-d) 0%,var(--forest) 55%,var(--forest-l) 100%);
-  color:#fff;
-  padding:2.2rem 2.5rem 3rem;
-  position:relative;
-  overflow:hidden;
-}
-header::after{
-  content:'';position:absolute;bottom:-1px;left:0;right:0;
-  height:40px;background:var(--cream);
-  clip-path:ellipse(60% 100% at 50% 100%);
-}
-.header-inner{max-width:1140px;margin:0 auto}
-header h1{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.8rem,4vw,2.9rem);
-  font-weight:700;letter-spacing:.02em;
-  text-shadow:0 2px 10px rgba(0,0,0,.35);
-}
-header p{
-  color:rgba(255,255,255,.75);font-size:.9rem;
-  margin-top:.4rem;letter-spacing:.12em;text-transform:uppercase;
-  font-weight:300;
-}
-.header-tags{display:flex;gap:.6rem;margin-top:1rem;flex-wrap:wrap}
-.tag{
-  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
-  border-radius:20px;padding:.25rem .8rem;font-size:.78rem;
-  color:rgba(255,255,255,.85);letter-spacing:.05em;
-}
+  :root {
+    --forest: #2d6a4f;
+    --forest-light: #40916c;
+    --forest-dark: #1b4332;
+    --gold: #d4a017;
+    --gold-light: #f4c542;
+    --sky: #74b9d4;
+    --sky-light: #a8d8ea;
+    --earth: #8b5e3c;
+    --earth-light: #c4956a;
+    --cream: #fef9ef;
+    --cream2: #fdf3de;
+    --text-dark: #1a2e1a;
+    --text-mid: #3a5a3a;
+    --text-light: #6a8a6a;
+    --red-accent: #c0392b;
+  }
 
-/* ── LAYOUT ─────────────────────────────── */
-.wrap{
-  max-width:1140px;margin:0 auto;
-  display:grid;grid-template-columns:260px 1fr;
-  gap:2rem;padding:2.5rem 1.5rem 4rem;
-  align-items:start;
-}
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-/* ── SIDEBAR ─────────────────────────────── */
-.sidebar{position:sticky;top:1.5rem}
-.nav-label{
-  font-size:.7rem;text-transform:uppercase;letter-spacing:.15em;
-  color:var(--forest-l);font-weight:500;
-  margin-bottom:.8rem;padding-bottom:.5rem;
-  border-bottom:1px solid rgba(45,90,39,.18);
-}
-.tbtn{
-  display:flex;align-items:center;gap:.65rem;width:100%;
-  background:none;border:none;
-  padding:.65rem .95rem;border-radius:10px;
-  cursor:pointer;font-family:'Geologica',sans-serif;
-  font-size:.88rem;color:var(--text-m);
-  text-align:left;transition:all .2s;margin-bottom:.25rem;
-}
-.tbtn:hover{background:rgba(45,90,39,.09);color:var(--forest-d);transform:translateX(3px)}
-.tbtn.active{background:var(--forest);color:#fff;font-weight:500}
-.tbtn .ico{width:1.4rem;text-align:center;font-size:1rem;flex-shrink:0}
+  /* === HERO === */
+  .hero {
+    background: linear-gradient(160deg, #1b4332 0%, #2d6a4f 40%, #40916c 70%, #74b9d4 100%);
+    padding: 2rem 1.5rem 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
 
-/* ── CONTENT ─────────────────────────────── */
-.content{display:flex;flex-direction:column;gap:1.6rem}
+  .hero::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0; right: 0;
+    height: 60px;
+    background: var(--cream);
+    clip-path: ellipse(55% 100% at 50% 100%);
+  }
 
-/* ── BIRD PANEL ─────────────────────────────── */
-.bird-panel{
-  display:flex;align-items:flex-end;gap:1.5rem;
-  background:#fff;border-radius:20px;
-  padding:1.6rem 1.8rem;
-  box-shadow:0 4px 24px rgba(45,90,39,.09);
-  border:1px solid rgba(45,90,39,.09);
-  min-height:200px;
-}
-.bird-wrap{flex-shrink:0;text-align:center}
-.bird-svg{
-  width:110px;height:118px;
-  animation:bob 2.8s ease-in-out infinite;
-  cursor:pointer;
-  filter:drop-shadow(0 5px 10px rgba(0,0,0,.13));
-}
-.bird-svg:hover{animation:excited .5s ease-in-out 3}
-@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-9px) rotate(2deg)}}
-@keyframes excited{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
-.bird-name{font-size:.68rem;color:var(--forest-l);font-weight:500;margin-top:.4rem;letter-spacing:.05em}
+  .stars {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+  }
 
-.bubble{
-  flex:1;background:var(--cream);
-  border-radius:16px 16px 16px 4px;
-  padding:1.3rem 1.5rem;position:relative;
-  border:1px solid rgba(45,90,39,.1);
-}
-.bubble::before{
-  content:'';position:absolute;left:-12px;bottom:22px;
-  border:10px solid transparent;border-right-color:rgba(45,90,39,.1);
-}
-.bubble::after{
-  content:'';position:absolute;left:-10px;bottom:23px;
-  border:9px solid transparent;border-right-color:var(--cream);
-}
-.bubble-tag{
-  font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;
-  color:var(--gold);font-weight:500;margin-bottom:.5rem;
-}
-.bubble-text{font-size:.95rem;line-height:1.8;color:var(--text);transition:opacity .25s}
-.bubble-text strong{color:var(--forest)}
+  .star {
+    position: absolute;
+    width: 3px; height: 3px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 50%;
+    animation: twinkle 2s infinite alternate;
+  }
 
-/* ── DETAIL CARD ─────────────────────────────── */
-.card{
-  background:#fff;border-radius:16px;padding:2rem;
-  box-shadow:0 4px 22px rgba(45,90,39,.07);
-  border:1px solid rgba(45,90,39,.08);
-  display:none;
-}
-.card.on{display:block;animation:up .38s ease}
-@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes twinkle {
+    from { opacity: 0.3; }
+    to { opacity: 1; }
+  }
 
-.card-title{
-  font-family:'Playfair Display',serif;
-  font-size:1.45rem;color:var(--forest-d);
-  margin-bottom:1.2rem;padding-bottom:.8rem;
-  border-bottom:2px solid var(--cream-d);
-  display:flex;align-items:center;gap:.6rem;
-}
-.card-body{font-size:.94rem;line-height:1.82;color:#243020}
-.card-body p{margin-bottom:.95rem}
-.card-body ul{padding-left:1.4rem;margin-bottom:.95rem}
-.card-body li{margin-bottom:.55rem;line-height:1.72}
-.card-body strong{color:var(--forest-d)}
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    color: #d4f1e4;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.35rem 1rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.25);
+    margin-bottom: 1rem;
+  }
 
-.hl{
-  background:rgba(45,90,39,.065);
-  border-left:3px solid var(--forest-l);
-  border-radius:0 8px 8px 0;
-  padding:.9rem 1.1rem;margin:.9rem 0;
-  font-size:.91rem;line-height:1.7;
-}
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
 
-.stats{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
-  gap:.9rem;margin:1rem 0;
-}
-.stat{
-  background:var(--cream);border-radius:10px;
-  padding:.8rem 1rem;text-align:center;
-  border:1px solid rgba(45,90,39,.08);
-}
-.stat-n{font-size:1.25rem;font-weight:600;color:var(--forest);display:block}
-.stat-l{font-size:.73rem;color:var(--text-m);display:block;margin-top:.2rem;line-height:1.35}
+  .hero-sub {
+    font-size: 1rem;
+    color: #b7e4c7;
+    font-weight: 600;
+    margin-bottom: 2rem;
+  }
 
-/* timeline */
-.tl{list-style:none;padding:0;margin:.8rem 0}
-.tl li{
-  display:flex;gap:1rem;padding:.6rem 0;
-  border-bottom:1px solid rgba(45,90,39,.08);
-  align-items:flex-start;
-}
-.tl li:last-child{border:none}
-.tl .yr{
-  background:var(--forest);color:#fff;
-  border-radius:6px;padding:.2rem .55rem;
-  font-size:.75rem;font-weight:600;white-space:nowrap;
-  flex-shrink:0;margin-top:.1rem;
-}
+  /* === MOUNTAIN DECORATION === */
+  .mountains-svg {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto 1rem;
+    display: block;
+  }
 
-/* mono cities */
-.cities{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1rem 0}
-.city{
-  background:var(--cream);border-radius:10px;
-  padding:.9rem 1.1rem;border-left:3px solid var(--forest-l);
-  border-top:1px solid rgba(45,90,39,.08);
-  border-right:1px solid rgba(45,90,39,.08);
-  border-bottom:1px solid rgba(45,90,39,.08);
-}
-.city.bad{border-left-color:#c0392b}
-.city h4{font-size:.9rem;font-weight:600;color:var(--forest-d);margin-bottom:.3rem}
-.city p{font-size:.82rem;color:#3a4a38;line-height:1.55}
+  /* === MAIN LAYOUT === */
+  .main-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
 
-/* heritage items */
-.sites{display:flex;flex-direction:column;gap:.8rem;margin-top:.8rem}
-.site{
-  display:flex;gap:1rem;align-items:flex-start;
-  background:var(--cream);border-radius:10px;
-  padding:.9rem 1.1rem;border:1px solid rgba(45,90,39,.08);
-}
-.site-ico{font-size:1.4rem;flex-shrink:0;margin-top:.1rem}
-.site-text h4{font-size:.9rem;font-weight:600;color:var(--forest-d);margin-bottom:.25rem}
-.site-text p{font-size:.83rem;line-height:1.6;color:#3a4a38}
+  /* === BIRD SECTION === */
+  .bird-stage {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    position: relative;
+  }
 
-footer{
-  text-align:center;padding:1.5rem;
-  color:rgba(45,90,39,.45);font-size:.78rem;
-  border-top:1px solid rgba(45,90,39,.1);
-  max-width:1140px;margin:0 auto;
-}
-#map{height:500px;border-radius:12px;overflow:hidden;border:1px solid rgba(45,90,39,.12)}
-.leaflet-popup-content-wrapper{border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.15);font-family:'Geologica',sans-serif}
-.leaflet-popup-content{margin:10px 14px;font-size:.85rem;line-height:1.65}
-.pop-title{font-weight:600;font-size:.95rem;color:#1a3a16;margin-bottom:.35rem}
-.pop-tag{display:inline-block;background:#e8f2e8;color:#2d5a27;border-radius:4px;padding:1px 7px;font-size:.72rem;margin-bottom:.4rem}
-.pop-tag.warn{background:#fff0e8;color:#a04020}
-.map-legend{
-  display:flex;flex-wrap:wrap;gap:.6rem;
-  margin-top:.9rem;font-size:.82rem;align-items:center;
-}
-.leg-item{display:flex;align-items:center;gap:.4rem;color:var(--text-m)}
-.leg-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
-.map-note{font-size:.78rem;color:var(--text-m);margin-top:.6rem;font-style:italic}
+  .bird-container {
+    flex-shrink: 0;
+    width: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .bird-svg-wrap {
+    width: 120px;
+    height: 120px;
+    cursor: pointer;
+    animation: birdbob 3.5s ease-in-out infinite;
+    filter: drop-shadow(0 4px 12px rgba(100,70,30,0.22));
+    transition: transform 0.2s;
+    position: relative;
+  }
+
+  .bird-svg-wrap:hover {
+    transform: scale(1.09);
+    animation: none;
+  }
+
+  .bird-svg-wrap.talking {
+    animation: birdtalk 0.25s ease-in-out infinite alternate;
+  }
+
+  .bird-svg-wrap.happy {
+    animation: birdhappy 0.6s ease-in-out 3;
+  }
+
+  .bird-svg-wrap.sad {
+    animation: birdsad 2s ease-in-out infinite;
+  }
+
+  .bird-svg-wrap.chirping {
+    animation: birdchirp 0.18s ease-in-out infinite alternate;
+  }
+
+  @keyframes birdbob {
+    0%, 100% { transform: translateY(0) rotate(1deg); }
+    50% { transform: translateY(-7px) rotate(-1deg); }
+  }
+
+  @keyframes birdtalk {
+    from { transform: translateY(-2px) scale(1.02); }
+    to { transform: translateY(2px) scale(0.98); }
+  }
+
+  @keyframes birdhappy {
+    0%   { transform: translateY(0) rotate(0deg) scale(1); }
+    25%  { transform: translateY(-12px) rotate(-8deg) scale(1.1); }
+    50%  { transform: translateY(-6px) rotate(6deg) scale(1.05); }
+    75%  { transform: translateY(-10px) rotate(-4deg) scale(1.08); }
+    100% { transform: translateY(0) rotate(0deg) scale(1); }
+  }
+
+  @keyframes birdsad {
+    0%, 100% { transform: translateY(0) rotate(3deg); }
+    50% { transform: translateY(4px) rotate(3deg); }
+  }
+
+  @keyframes birdchirp {
+    from { transform: scale(1) rotate(-2deg); }
+    to { transform: scale(1.06) rotate(3deg); }
+  }
+
+  .emotion-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    font-size: 1.4rem;
+    animation: popbadge 0.3s cubic-bezier(.17,.67,.37,1.4);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  @keyframes popbadge {
+    from { transform: scale(0) rotate(-20deg); opacity: 0; }
+    to   { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  .bird-name {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--forest);
+    text-align: center;
+    background: #d8f3dc;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+  }
+
+  /* === SPEECH BUBBLE === */
+  .speech-bubble {
+    background: #fff;
+    border: 2px solid #b7e4c7;
+    border-radius: 20px 20px 20px 4px;
+    padding: 1.25rem 1.5rem;
+    position: relative;
+    flex: 1;
+    box-shadow: 0 4px 20px rgba(45,106,79,0.12);
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .speech-bubble::before {
+    content: '';
+    position: absolute;
+    left: -18px;
+    bottom: 30px;
+    border: 9px solid transparent;
+    border-right-color: #b7e4c7;
+  }
+
+  .speech-bubble::after {
+    content: '';
+    position: absolute;
+    left: -14px;
+    bottom: 32px;
+    border: 7px solid transparent;
+    border-right-color: #fff;
+  }
+
+  .speech-text {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--text-dark);
+  }
+
+  .speech-text .highlight {
+    color: var(--forest);
+    font-weight: 700;
+  }
+
+  .speech-text .number {
+    color: var(--red-accent);
+    font-weight: 800;
+  }
+
+  .speech-hint {
+    font-size: 0.78rem;
+    color: var(--text-light);
+    margin-top: 0.75rem;
+    font-style: italic;
+  }
+
+  .topic-label {
+    display: inline-block;
+    background: var(--forest);
+    color: #d8f3dc;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    margin-bottom: 0.6rem;
+  }
+
+  /* === TOPICS GRID === */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--forest-dark);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(to right, #b7e4c7, transparent);
+    border-radius: 2px;
+  }
+
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.85rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .topic-btn {
+    background: #fff;
+    border: 2px solid #d8f3dc;
+    border-radius: 16px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    font-family: 'Nunito', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    box-shadow: 0 2px 8px rgba(45,106,79,0.06);
+  }
+
+  .topic-btn:hover {
+    border-color: var(--forest-light);
+    background: #f0fbf4;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(45,106,79,0.15);
+  }
+
+  .topic-btn.active {
+    border-color: var(--forest);
+    background: #e8f7ed;
+    box-shadow: 0 4px 16px rgba(45,106,79,0.2);
+  }
+
+  .topic-icon {
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+
+  .topic-title {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--forest-dark);
+  }
+
+  .topic-sub {
+    font-size: 0.72rem;
+    color: var(--text-light);
+    font-weight: 600;
+  }
+
+  /* === INFO CARDS === */
+  .info-panel {
+    display: none;
+    animation: fadein 0.35s ease;
+  }
+
+  .info-panel.visible {
+    display: block;
+  }
+
+  @keyframes fadein {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .info-card {
+    background: #fff;
+    border: 1.5px solid #d8f3dc;
+    border-radius: 18px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 12px rgba(45,106,79,0.07);
+  }
+
+  .info-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--forest-dark);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .info-card p {
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: var(--text-dark);
+    margin-bottom: 0.6rem;
+  }
+
+  .info-card p:last-child { margin-bottom: 0; }
+
+  .stat-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .stat-chip {
+    background: var(--cream2);
+    border: 1.5px solid #f4c542;
+    border-radius: 12px;
+    padding: 0.5rem 0.9rem;
+    font-size: 0.82rem;
+  }
+
+  .stat-chip strong {
+    display: block;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--forest-dark);
+  }
+
+  .stat-chip span {
+    color: var(--text-light);
+    font-weight: 600;
+  }
+
+  .tag {
+    display: inline-block;
+    background: #d8f3dc;
+    color: var(--forest-dark);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    margin: 0.15rem;
+  }
+
+  .tag.warn {
+    background: #fdecd4;
+    color: #7a4010;
+  }
+
+  .tag.danger {
+    background: #fde8e8;
+    color: #7a1010;
+  }
+
+  .mono-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin-top: 0.75rem;
+  }
+
+  .mono-table th {
+    background: var(--forest);
+    color: #d8f3dc;
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.78rem;
+  }
+
+  .mono-table td {
+    padding: 0.55rem 0.75rem;
+    border-bottom: 1px solid #edf7f0;
+    vertical-align: top;
+  }
+
+  .mono-table tr:nth-child(even) td {
+    background: #f7fdf9;
+  }
+
+  .mono-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .status-stable { color: #2d6a4f; font-weight: 700; }
+  .status-hard { color: #c0392b; font-weight: 700; }
+
+  .source-note {
+    font-size: 0.72rem;
+    color: var(--text-light);
+    margin-top: 0.75rem;
+    font-style: italic;
+    border-top: 1px solid #edf7f0;
+    padding-top: 0.5rem;
+  }
+
+  /* === FOOTER === */
+  footer {
+    background: var(--forest-dark);
+    color: #b7e4c7;
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  footer span {
+    color: var(--gold-light);
+  }
+
+  /* === MAP HINT === */
+  .map-section {
+    background: linear-gradient(135deg, #1b4332, #2d6a4f);
+    border-radius: 18px;
+    padding: 1.5rem;
+    color: #d8f3dc;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .map-info { flex: 1; min-width: 200px; }
+  .map-info h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: #fff;
+    margin-bottom: 0.4rem;
+  }
+  .map-info p { font-size: 0.85rem; color: #95d5b2; line-height: 1.6; }
+
+  .geo-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .geo-fact {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 10px;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.78rem;
+    color: #d8f3dc;
+    font-weight: 600;
+  }
+
+  .geo-fact strong {
+    display: block;
+    font-size: 1rem;
+    color: #f4c542;
+    font-weight: 800;
+  }
+
+  @media (max-width: 560px) {
+    .bird-stage { flex-direction: column; align-items: center; }
+    .speech-bubble { border-radius: 20px; }
+    .speech-bubble::before, .speech-bubble::after { display: none; }
+    .topics-grid { grid-template-columns: repeat(2, 1fr); }
+  }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="header-inner">
-    <h1>Республика Хакасия</h1>
-    <p>Интерактивный географический доклад</p>
-    <div class="header-tags">
-      <span class="tag">Южная Сибирь</span>
-      <span class="tag">61 569 км²</span>
-      <span class="tag">Столица: Абакан</span>
-      <span class="tag">Земля пяти стихий</span>
+<!-- HERO -->
+<div class="hero">
+  <div class="stars" id="stars"></div>
+  <div class="hero-badge">🏔️ Урок географии</div>
+  <h1>Республика Хакасия</h1>
+  <p class="hero-sub">Виртуальный гид · Земля пяти стихий</p>
+  <svg class="mountains-svg" viewBox="0 0 500 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <polygon points="0,100 70,30 140,100" fill="rgba(255,255,255,0.06)"/>
+    <polygon points="60,100 150,10 240,100" fill="rgba(255,255,255,0.09)"/>
+    <polygon points="180,100 270,35 360,100" fill="rgba(255,255,255,0.06)"/>
+    <polygon points="300,100 390,15 480,100" fill="rgba(255,255,255,0.1)"/>
+    <polygon points="400,100 460,50 500,100" fill="rgba(255,255,255,0.05)"/>
+    <rect x="0" y="88" width="500" height="12" fill="rgba(255,255,255,0.05)" rx="4"/>
+  </svg>
+</div>
+
+<!-- MAIN -->
+<div class="main-wrap">
+
+  <!-- BIRD DIALOGUE -->
+  <div class="bird-stage">
+    <div class="bird-container">
+      <div class="bird-svg-wrap" id="birdWrap" onclick="birdGreet()" title="Нажми на меня!" style="position:relative;">
+        <!-- emotion badge slot -->
+        <div id="emotionBadge" class="emotion-badge" style="display:none;"></div>
+
+        <!-- NORMAL bird (faces right toward text) -->
+        <svg id="birdNormal" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;width:100%;height:100%;">
+          <!-- branch -->
+          <rect x="8" y="95" width="104" height="8" rx="4" fill="#7a5c38"/>
+          <rect x="15" y="92" width="90" height="6" rx="3" fill="#8b6840"/>
+          <!-- tail (left side, pointing away) -->
+          <ellipse cx="25" cy="80" rx="16" ry="5" fill="#8a7040" transform="rotate(30 25 80)"/>
+          <ellipse cx="22" cy="82" rx="13" ry="4" fill="#7a6030" transform="rotate(35 22 82)"/>
+          <!-- body -->
+          <ellipse cx="60" cy="74" rx="30" ry="21" fill="#b8a060"/>
+          <ellipse cx="62" cy="78" rx="24" ry="16" fill="#d4b878"/>
+          <!-- belly (cream/buff) -->
+          <ellipse cx="64" cy="80" rx="16" ry="11" fill="#ede0b0"/>
+          <!-- wing (olive-brown) -->
+          <ellipse cx="52" cy="72" rx="22" ry="10" fill="#8a7838" transform="rotate(-8 52 72)"/>
+          <ellipse cx="54" cy="70" rx="18" ry="7" fill="#9a8848" transform="rotate(-6 54 70)"/>
+          <!-- wing bars white -->
+          <line x1="38" y1="68" x2="68" y2="63" stroke="#e8ddb0" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+          <line x1="40" y1="73" x2="70" y2="68" stroke="#e8ddb0" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+          <!-- head (faces right) -->
+          <ellipse cx="82" cy="56" rx="21" ry="19" fill="#b8a060"/>
+          <ellipse cx="84" cy="58" rx="16" ry="14" fill="#c8b070"/>
+          <!-- crown - yellow gold stripe -->
+          <ellipse cx="81" cy="41" rx="8" ry="5" fill="#f4c030"/>
+          <ellipse cx="81" cy="42" rx="7" ry="4" fill="#e6aa10"/>
+          <!-- black crown border stripes -->
+          <path d="M73 43 Q81 37 89 43" stroke="#1a1500" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <line x1="73" y1="45" x2="89" y2="45" stroke="#1a1500" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+          <!-- eye (on right side of head, facing right) -->
+          <circle cx="92" cy="55" r="5.5" fill="#fff"/>
+          <circle cx="93" cy="55" r="4" fill="#1a1200"/>
+          <circle cx="94" cy="54" r="1.2" fill="#fff"/>
+          <!-- beak pointing right -->
+          <path d="M100 60 L114 63 L100 66 Z" fill="#7a6020"/>
+          <line x1="100" y1="63" x2="114" y2="63" stroke="#5a4010" stroke-width="0.8"/>
+          <!-- cheek -->
+          <ellipse cx="87" cy="61" rx="7" ry="4.5" fill="#d4b878" opacity="0.5"/>
+          <!-- feet -->
+          <line x1="55" y1="91" x2="53" y2="97" stroke="#7a6020" stroke-width="2.2"/>
+          <line x1="67" y1="91" x2="69" y2="97" stroke="#7a6020" stroke-width="2.2"/>
+          <line x1="48" y1="97" x2="58" y2="97" stroke="#7a6020" stroke-width="2"/>
+          <line x1="64" y1="97" x2="74" y2="97" stroke="#7a6020" stroke-width="2"/>
+        </svg>
+
+        <!-- HAPPY bird (wings up, open beak, big eyes) -->
+        <svg id="birdHappy" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;width:100%;height:100%;display:none;">
+          <rect x="8" y="97" width="104" height="7" rx="3.5" fill="#7a5c38"/>
+          <!-- tail -->
+          <ellipse cx="23" cy="82" rx="14" ry="5" fill="#8a7040" transform="rotate(25 23 82)"/>
+          <!-- body -->
+          <ellipse cx="60" cy="76" rx="29" ry="20" fill="#b8a060"/>
+          <ellipse cx="62" cy="79" rx="23" ry="15" fill="#d4b878"/>
+          <ellipse cx="63" cy="81" rx="15" ry="10" fill="#ede0b0"/>
+          <!-- wings raised/flapping -->
+          <ellipse cx="45" cy="62" rx="20" ry="9" fill="#8a7838" transform="rotate(-30 45 62)"/>
+          <ellipse cx="47" cy="60" rx="16" ry="7" fill="#9a8848" transform="rotate(-28 47 60)"/>
+          <line x1="32" y1="56" x2="58" y2="60" stroke="#e8ddb0" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+          <!-- head -->
+          <ellipse cx="82" cy="57" rx="21" ry="19" fill="#b8a060"/>
+          <ellipse cx="84" cy="58" rx="16" ry="14" fill="#c8b070"/>
+          <!-- crown -->
+          <ellipse cx="81" cy="41" rx="8" ry="5" fill="#f4c030"/>
+          <path d="M73 43 Q81 37 89 43" stroke="#1a1500" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <!-- happy big eyes -->
+          <circle cx="92" cy="55" r="6.5" fill="#fff"/>
+          <circle cx="93" cy="55" r="4.5" fill="#1a1200"/>
+          <circle cx="94.5" cy="53.5" r="1.5" fill="#fff"/>
+          <!-- open happy beak -->
+          <path d="M100 59 L115 61 L113 66 L100 65 Z" fill="#e8a020"/>
+          <path d="M100 62 L113 63" stroke="#c07010" stroke-width="1"/>
+          <!-- cheek blush -->
+          <ellipse cx="87" cy="63" rx="7" ry="4" fill="#e8a080" opacity="0.55"/>
+          <!-- feet bouncing -->
+          <line x1="55" y1="93" x2="50" y2="99" stroke="#7a6020" stroke-width="2.2"/>
+          <line x1="67" y1="93" x2="72" y2="99" stroke="#7a6020" stroke-width="2.2"/>
+          <line x1="45" y1="99" x2="55" y2="99" stroke="#7a6020" stroke-width="2"/>
+          <line x1="67" y1="99" x2="77" y2="99" stroke="#7a6020" stroke-width="2"/>
+        </svg>
+
+        <!-- SAD bird (droopy, half-closed eyes, closed beak) -->
+        <svg id="birdSad" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;width:100%;height:100%;display:none;">
+          <rect x="8" y="97" width="104" height="7" rx="3.5" fill="#7a5c38"/>
+          <!-- tail drooping -->
+          <ellipse cx="22" cy="86" rx="15" ry="5" fill="#8a7040" transform="rotate(45 22 86)"/>
+          <!-- body -->
+          <ellipse cx="60" cy="78" rx="29" ry="20" fill="#a89050"/>
+          <ellipse cx="62" cy="81" rx="23" ry="15" fill="#c0a060"/>
+          <ellipse cx="63" cy="83" rx="15" ry="10" fill="#d8ca98"/>
+          <!-- wings drooping -->
+          <ellipse cx="50" cy="78" rx="22" ry="9" fill="#7a6828" transform="rotate(10 50 78)"/>
+          <ellipse cx="52" cy="76" rx="18" ry="7" fill="#8a7838" transform="rotate(8 52 76)"/>
+          <line x1="36" y1="76" x2="66" y2="74" stroke="#d0c8a0" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+          <!-- head tilted sad -->
+          <ellipse cx="81" cy="59" rx="21" ry="18" fill="#a89050"/>
+          <ellipse cx="83" cy="61" rx="16" ry="14" fill="#b89a5a"/>
+          <!-- crown less bright -->
+          <ellipse cx="80" cy="44" rx="8" ry="4.5" fill="#c8a020"/>
+          <path d="M72 46 Q80 40 88 46" stroke="#1a1500" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <!-- sad droopy eye -->
+          <circle cx="91" cy="57" r="5.5" fill="#fff"/>
+          <circle cx="92" cy="58" r="3.5" fill="#1a1200"/>
+          <circle cx="93" cy="57" r="1" fill="#fff"/>
+          <!-- sad eyelid -->
+          <path d="M86 54 Q91 52 96 54" stroke="#a89050" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <!-- closed sad beak (downturned) -->
+          <path d="M99 63 L111 67 L99 69 Z" fill="#7a6020"/>
+          <!-- tear drop -->
+          <ellipse cx="89" cy="66" rx="2" ry="3" fill="#74b9d4" opacity="0.8"/>
+          <!-- feet -->
+          <line x1="55" y1="94" x2="54" y2="100" stroke="#7a6020" stroke-width="2.2"/>
+          <line x1="67" y1="94" x2="68" y2="100" stroke="#7a6020" stroke-width="2.2"/>
+          <line x1="49" y1="100" x2="59" y2="100" stroke="#7a6020" stroke-width="2"/>
+          <line x1="63" y1="100" x2="73" y2="100" stroke="#7a6020" stroke-width="2"/>
+        </svg>
+
+        <!-- CHIRPING bird (beak wide open) -->
+        <svg id="birdChirp" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;width:100%;height:100%;display:none;">
+          <rect x="8" y="95" width="104" height="8" rx="4" fill="#7a5c38"/>
+          <!-- tail -->
+          <ellipse cx="25" cy="80" rx="16" ry="5" fill="#8a7040" transform="rotate(30 25 80)"/>
+          <!-- body -->
+          <ellipse cx="60" cy="74" rx="30" ry="21" fill="#b8a060"/>
+          <ellipse cx="62" cy="78" rx="24" ry="16" fill="#d4b878"/>
+          <ellipse cx="64" cy="80" rx="16" ry="11" fill="#ede0b0"/>
+          <!-- wing -->
+          <ellipse cx="52" cy="72" rx="22" ry="10" fill="#8a7838" transform="rotate(-8 52 72)"/>
+          <ellipse cx="54" cy="70" rx="18" ry="7" fill="#9a8848" transform="rotate(-6 54 70)"/>
+          <line x1="38" y1="68" x2="68" y2="63" stroke="#e8ddb0" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+          <!-- head -->
+          <ellipse cx="82" cy="56" rx="21" ry="19" fill="#b8a060"/>
+          <ellipse cx="84" cy="58" rx="16" ry="14" fill="#c8b070"/>
+          <!-- crown -->
+          <ellipse cx="81" cy="41" rx="8" ry="5" fill="#f4c030"/>
+          <path d="M73 43 Q81 37 89 43" stroke="#1a1500" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <!-- eye -->
+          <circle cx="92" cy="54" r="6" fill="#fff"/>
+          <circle cx="93" cy="54" r="4.2" fill="#1a1200"/>
+          <circle cx="94.5" cy="53" r="1.3" fill="#fff"/>
+          <!-- WIDE OPEN beak -->
+          <path d="M100 56 L118 50 L117 58 L100 62 Z" fill="#e8a020"/>
+          <path d="M100 59 L117 54" stroke="#c07010" stroke-width="1.2"/>
+          <path d="M100 59 L116 57 L115 62 L100 62 Z" fill="#c85010" opacity="0.6"/>
+          <!-- musical notes chirping -->
+          <text x="74" y="34" font-size="11" fill="#d4a017" font-weight="bold" opacity="0.9">♪</text>
+          <text x="88" y="27" font-size="9" fill="#d4a017" opacity="0.7">♫</text>
+          <text x="99" y="35" font-size="8" fill="#d4a017" opacity="0.6">♪</text>
+          <!-- feet -->
+          <line x1="55" y1="91" x2="53" y2="97" stroke="#7a6020" stroke-width="2.2"/>
+          <line x1="67" y1="91" x2="69" y2="97" stroke="#7a6020" stroke-width="2.2"/>
+          <line x1="48" y1="97" x2="58" y2="97" stroke="#7a6020" stroke-width="2"/>
+          <line x1="64" y1="97" x2="74" y2="97" stroke="#7a6020" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="bird-name">Королёк 🐦</div>
+    </div>
+
+    <div class="speech-bubble" id="speechBubble">
+      <div class="speech-text" id="speechText">
+        Привет! Я <span class="highlight">Королёк</span> — самая маленькая птица Хакасии 🌿<br><br>
+        Я расскажу тебе всё о <span class="highlight">Республике Хакасия</span>! Выбирай тему ниже, и я начну рассказывать. Можешь также кликнуть на меня, если хочешь познакомиться поближе 😊
+        <div class="speech-hint">👇 Нажми на одну из тем, чтобы начать</div>
+      </div>
     </div>
   </div>
-</header>
 
-<div class="wrap">
-
-  <!-- ── SIDEBAR ── -->
-  <nav class="sidebar">
-    <div class="nav-label">Разделы доклада</div>
-    <button class="tbtn active" id="btn-welcome"    onclick="go('welcome')">   <span class="ico">🌿</span>Добро пожаловать</button>
-    <button class="tbtn"        id="btn-history"    onclick="go('history')">   <span class="ico">📜</span>История</button>
-    <button class="tbtn"        id="btn-resources"  onclick="go('resources')"> <span class="ico">⛏️</span>Ресурсы</button>
-    <button class="tbtn"        id="btn-climate"    onclick="go('climate')">   <span class="ico">🌡️</span>Климат</button>
-    <button class="tbtn"        id="btn-population" onclick="go('population')"><span class="ico">👥</span>Население</button>
-    <button class="tbtn"        id="btn-economy"    onclick="go('economy')">   <span class="ico">🏭</span>Экономика</button>
-    <button class="tbtn"        id="btn-projects"   onclick="go('projects')">  <span class="ico">🏗️</span>Несост. проекты</button>
-    <button class="tbtn"        id="btn-heritage"   onclick="go('heritage')">  <span class="ico">🏛️</span>Культ. наследие</button>
-    <button class="tbtn"        id="btn-branding"   onclick="go('branding')">  <span class="ico">✨</span>Брендинг</button>
-    <button class="tbtn"        id="btn-map"        onclick="go('map')">       <span class="ico">🗺️</span>Карта</button>
-  </nav>
-
-  <!-- ── CONTENT ── -->
-  <div class="content">
-
-    <!-- Bird + bubble -->
-    <div class="bird-panel">
-      <div class="bird-wrap">
-        <svg class="bird-svg" viewBox="0 0 120 128" xmlns="http://www.w3.org/2000/svg" onclick="chirp()">
-          <!-- branch -->
-          <path d="M8 112 Q60 106 112 110" stroke="#7a5c3e" stroke-width="5.5" fill="none" stroke-linecap="round"/>
-          <path d="M52 112 Q50 120 44 126" stroke="#7a5c3e" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <path d="M68 111 Q70 119 75 125" stroke="#7a5c3e" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <!-- tail -->
-          <ellipse cx="88" cy="95" rx="19" ry="6.5" fill="#7a8f3a" transform="rotate(28 88 95)"/>
-          <ellipse cx="90" cy="91" rx="15" ry="4.5" fill="#8fa042" transform="rotate(22 90 91)"/>
-          <!-- body -->
-          <ellipse cx="60" cy="85" rx="33" ry="27" fill="#8ea545"/>
-          <!-- belly -->
-          <ellipse cx="54" cy="93" rx="21" ry="16" fill="#c9c86a"/>
-          <!-- wing -->
-          <path d="M73 78 Q92 70 90 91 Q78 96 67 87Z" fill="#6b7934"/>
-          <path d="M73 80 Q88 73 86 89" stroke="#8fa042" stroke-width="1.5" fill="none"/>
-          <path d="M71 84 Q86 77 84 93" stroke="#8fa042" stroke-width="1.5" fill="none"/>
-          <!-- head -->
-          <ellipse cx="44" cy="64" rx="23" ry="21" fill="#9ab04f"/>
-          <!-- crown blacks -->
-          <path d="M32 56 Q44 46 57 54" stroke="#1a1a1a" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-          <path d="M34 61 Q44 51 56 59" stroke="#1a1a1a" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-          <!-- crown gold -->
-          <path d="M33 58.5 Q44 48.5 56.5 56.5" stroke="#f5c518" stroke-width="3.2" fill="none" stroke-linecap="round"/>
-          <!-- cheek -->
-          <ellipse cx="37" cy="70" rx="12" ry="9" fill="#b8c660"/>
-          <!-- eye -->
-          <circle cx="36" cy="64" r="4.2" fill="#111"/>
-          <circle cx="37.4" cy="62.6" r="1.3" fill="white"/>
-          <!-- beak -->
-          <path d="M24 66 L15 64 L24 70Z" fill="#4a4a4a"/>
-          <!-- feet -->
-          <path d="M50 111 L46 114 M50 111 L50 115 M50 111 L54 114" stroke="#8b6a3e" stroke-width="2" fill="none" stroke-linecap="round"/>
-          <path d="M66 110 L62 113 M66 110 L66 114 M66 110 L70 113" stroke="#8b6a3e" stroke-width="2" fill="none" stroke-linecap="round"/>
-        </svg>
-        <div class="bird-name">Желтоголовый королёк</div>
-      </div>
-
-      <div class="bubble">
-        <div class="bubble-tag" id="btag">Привет!</div>
-        <div class="bubble-text" id="btext">
-          Чирик! Я — желтоголовый королёк, маленький житель хакасской тайги! Нажми на раздел слева, и я расскажу тебе всё о моей республике. <strong>Ахухвау!</strong> 🌲
-        </div>
-      </div>
+  <!-- GEO QUICK FACTS -->
+  <div class="map-section">
+    <div class="map-info">
+      <h3>🗺️ Географическая справка</h3>
+      <p>Республика Хакасия — субъект РФ в Южной Сибири. Граничит с Красноярским краем, Кемеровской обл., республиками Алтай и Тыва.</p>
     </div>
-
-    <!-- ── WELCOME CARD ── -->
-    <div class="card on" id="card-welcome">
-      <div class="card-title">🌿 Республика Хакасия</div>
-      <div class="card-body">
-        <div class="stats">
-          <div class="stat"><span class="stat-n">61 569</span><span class="stat-l">км² — площадь</span></div>
-          <div class="stat"><span class="stat-n">~530 тыс.</span><span class="stat-l">жителей (2021)</span></div>
-          <div class="stat"><span class="stat-n">Абакан</span><span class="stat-l">столица республики</span></div>
-          <div class="stat"><span class="stat-n">5</span><span class="stat-l">городов в республике</span></div>
-        </div>
-        <p>Республика расположена в Южной Сибири. Граничит на востоке с <strong>Красноярским краем</strong>, на западе с <strong>Кемеровской областью</strong>, на юге с <strong>Республикой Алтай</strong> и <strong>Республикой Тыва</strong>.</p>
-        <div class="hl">Официальный туристический слоган: <strong>«Хакасия. Земля пяти стихий»</strong>.<br>И народный вариант: <em>«Хакасия — это ах! Это ух! Это вау! Ахухвау!»</em></div>
-        <p>Выбирай любой раздел слева — королёк всё расскажет!</p>
-      </div>
+    <div class="geo-facts">
+      <div class="geo-fact"><strong>Абакан</strong>столица</div>
+      <div class="geo-fact"><strong>61 500 км²</strong>площадь</div>
+      <div class="geo-fact"><strong>~530 тыс.</strong>жителей</div>
+      <div class="geo-fact"><strong>8 районов</strong>административно</div>
+      <div class="geo-fact"><strong>5 городов</strong>в республике</div>
     </div>
+  </div>
 
-    <!-- ── HISTORY ── -->
-    <div class="card" id="card-history">
-      <div class="card-title">📜 История вхождения в состав России</div>
-      <div class="card-body">
-        <p>Ключевым фоном была <strong>борьба Русского царства</strong> против союза енисейских кыргызов (Хонгорай) и Джунгарского ханства.</p>
-        <ul class="tl">
-          <li><span class="yr">1703</span><span>Джунгары насильственно угнали большую часть населения Хонгорая в свои степи — сопротивление ослабло</span></li>
-          <li><span class="yr">1707</span><span>Пётр I подписал указ о строительстве <strong>Абаканского острога</strong> — фактическое начало вхождения</span></li>
-          <li><span class="yr">1718</span><span>Возведён <strong>Саянский острог</strong> на южной границе — закрепление русских земель</span></li>
-          <li><span class="yr">20 авг. 1727</span><span>Заключён российско-китайский пограничный тракт: земли к северу от Саян — России, к югу — Китаю. <strong>Официальное закрепление</strong></span></li>
-          <li><span class="yr">1758</span><span>После китайского вторжения на Алтай царское правительство срочно разместило <strong>казачьи гарнизоны</strong> — фактическое закрепление</span></li>
-          <li><span class="yr">1822</span><span>На территории насчитывалось <strong>90 русских поселений</strong> — редкость для Сибири</span></li>
-        </ul>
-        <div class="hl">Свободная территория и слабый государственный контроль привлекали переселенцев — в том числе <strong>старообрядцев</strong>, спасавшихся от репрессий.</div>
+  <!-- TOPICS -->
+  <div class="section-title">Выбери тему для Королька</div>
+  <div class="topics-grid">
+    <button class="topic-btn" onclick="showTopic('history', this)">
+      <span class="topic-icon">🏯</span>
+      <span class="topic-title">История</span>
+      <span class="topic-sub">Вхождение в Россию</span>
+    </button>
+    <button class="topic-btn" onclick="showTopic('resources', this)">
+      <span class="topic-icon">⛏️</span>
+      <span class="topic-title">Ресурсы</span>
+      <span class="topic-sub">Богатства земли</span>
+    </button>
+    <button class="topic-btn" onclick="showTopic('climate', this)">
+      <span class="topic-icon">🌡️</span>
+      <span class="topic-title">Климат</span>
+      <span class="topic-sub">Погода и сезоны</span>
+    </button>
+    <button class="topic-btn" onclick="showTopic('population', this)">
+      <span class="topic-icon">👥</span>
+      <span class="topic-title">Население</span>
+      <span class="topic-sub">Демография</span>
+    </button>
+    <button class="topic-btn" onclick="showTopic('economy', this)">
+      <span class="topic-icon">🏭</span>
+      <span class="topic-title">Экономика</span>
+      <span class="topic-sub">ВРП и отрасли</span>
+    </button>
+    <button class="topic-btn" onclick="showTopic('failed', this)">
+      <span class="topic-icon">🏚️</span>
+      <span class="topic-title">Несост. проекты</span>
+      <span class="topic-sub">Советское наследие</span>
+    </button>
+    <button class="topic-btn" onclick="showTopic('heritage', this)">
+      <span class="topic-icon">🗿</span>
+      <span class="topic-title">Наследие</span>
+      <span class="topic-sub">Памятники культуры</span>
+    </button>
+    <button class="topic-btn" onclick="showTopic('brand', this)">
+      <span class="topic-icon">✨</span>
+      <span class="topic-title">Брендинг</span>
+      <span class="topic-sub">Земля пяти стихий</span>
+    </button>
+  </div>
+
+  <!-- INFO PANELS -->
+
+  <!-- HISTORY -->
+  <div class="info-panel" id="panel-history">
+    <div class="info-card">
+      <h3>🏯 История вхождения в Россию</h3>
+      <p>Ключевое фоновое событие — борьба за регион между <strong>Русским царством</strong> и союзом енисейских кыргызов (Хонгорай) вместе с Джунгарским ханством. В <strong>1703 году</strong> джунгары насильственно угнали большую часть населения Хонгорая в свои степи, что существенно ослабило сопротивление.</p>
+      <p>Территория Хакасии <strong>фактически начала вхождение в состав России в 1707 году</strong>, когда Пётр I воспользовался ситуацией и подписал указ о строительстве Абаканского острога. В 1718 году был возведён Саянский острог на южной границе.</p>
+      <p><strong>Официальное закрепление — 20 августа 1727 года</strong>: заключён российско-китайский пограничный договор. Все земли к северу от Саян отошли России. Фактическое закрепление произошло в <strong>1758 году</strong> — после вторжения китайских войск на Алтай царское правительство срочно разместило казачьи гарнизоны на хакасском участке границы.</p>
+      <div class="stat-row">
+        <div class="stat-chip"><strong>1707</strong><span>Абаканский острог</span></div>
+        <div class="stat-chip"><strong>1718</strong><span>Саянский острог</span></div>
+        <div class="stat-chip"><strong>1727</strong><span>Официальное закрепление</span></div>
+        <div class="stat-chip"><strong>1758</strong><span>Казачьи гарнизоны</span></div>
       </div>
+      <p class="source-note">По материалам доклада</p>
     </div>
+  </div>
 
-    <!-- ── RESOURCES ── -->
-    <div class="card" id="card-resources">
-      <div class="card-title">⛏️ Природные ресурсы</div>
-      <div class="card-body">
-        <p>В XVII–XVIII веках активно осваивались <strong>золото, железо, соль, пушнина</strong>. Хакасско-Минусинская котловина обладала пригодными для земледелия землями.</p>
-        <p>В <strong>советский период</strong> главными стали каменный уголь и сельскохозяйственная продукция, перевозившиеся по Транссибу. В XX веке построены крупнейшие предприятия:</p>
-        <ul>
-          <li><strong>Саянский алюминиевый завод</strong> (ныне РУСАЛ Саяногорск)</li>
-          <li><strong>Абаканвагонмаш</strong> — вагоностроение</li>
-          <li><strong>Сорский молибденовый комбинат</strong> — единственный в России</li>
-          <li><strong>Железные рудники</strong> в горной части республики</li>
-        </ul>
-        <div class="hl">Именно эти предприятия превратили Хакасию из <strong>аграрного</strong> в <strong>индустриальный регион</strong>. Ключевую роль сыграла дешёвая электроэнергия Саяно-Шушенской ГЭС.</div>
+  <!-- RESOURCES -->
+  <div class="info-panel" id="panel-resources">
+    <div class="info-card">
+      <h3>⛏️ Природные ресурсы</h3>
+      <p>В XVII–XVIII веках шло активное освоение природных богатств: <strong>золото, железо, соль, пушнина</strong>. Хакасско-Минусинская котловина обладала пригодными для земледелия землями. К 1822 году на территории насчитывалось <strong>90 русских поселений</strong> — для Сибири это было редкостью.</p>
+      <p>Свободная территория привлекала переселенцев, в том числе <strong>старообрядцев</strong>, подвергавшихся репрессиям. Слабый государственный контроль служил катализатором для переселения.</p>
+      <p>В советский период главными ресурсами стали <strong>каменный уголь</strong> и продукты сельского хозяйства, которые перевозились по Транссибу. В XX веке построены крупные промышленные предприятия, превратившие Хакасию из аграрного в <strong>индустриальный регион</strong>.</p>
+      <div class="stat-row">
+        <div class="stat-chip" style="border-color: #7a5c38;"><strong>🪨</strong><span>Каменный уголь</span></div>
+        <div class="stat-chip" style="border-color: #7a5c38;"><strong>🔩</strong><span>Алюминий</span></div>
+        <div class="stat-chip" style="border-color: #7a5c38;"><strong>⚙️</strong><span>Молибден</span></div>
+        <div class="stat-chip" style="border-color: #7a5c38;"><strong>🌾</strong><span>С/Х</span></div>
+        <div class="stat-chip" style="border-color: #7a5c38;"><strong>⚡</strong><span>Гидроэнергетика</span></div>
       </div>
+      <p style="margin-top:0.75rem; font-size:0.85rem;">Ключевые советские предприятия: <span class="tag">Саянский алюминиевый завод</span> <span class="tag">Абаканвагонмаш</span> <span class="tag">Сорский молибденовый комбинат</span></p>
+      <p class="source-note">По материалам доклада</p>
     </div>
+  </div>
 
-    <!-- ── CLIMATE ── -->
-    <div class="card" id="card-climate">
-      <div class="card-title">🌡️ Климат</div>
-      <div class="card-body">
-        <p>Климат — <strong>резко континентальный</strong>: значительные температурные перепады между зимой и летом.</p>
-        <div class="stats">
-          <div class="stat"><span class="stat-n">−19…−21°С</span><span class="stat-l">средняя зимняя t° в котловинах</span></div>
-          <div class="stat"><span class="stat-n">до −52°С</span><span class="stat-l">абсолютный минимум</span></div>
-          <div class="stat"><span class="stat-n">18–24°С</span><span class="stat-l">средняя летняя t° (июнь–авг.)</span></div>
-          <div class="stat"><span class="stat-n">~300 мм</span><span class="stat-l">годовая норма осадков</span></div>
-        </div>
-        <ul>
-          <li><strong>Зима</strong> — длительная, холодная, сухая. Снежный покров устанавливается к началу ноября</li>
-          <li><strong>Лето</strong> — тёплое, местами до +38°С. Лучшее время для туризма и сельского хозяйства</li>
-          <li><strong>Весна</strong> — короткая, ночные заморозки до −3°С, усложняет сельхозработы</li>
-          <li><strong>Осень</strong> — сухая, солнечная, 8–10 дождливых дней в месяц</li>
-        </ul>
-        <div class="hl">55–70% годовых осадков выпадает <strong>летом</strong> в виде ливней. В предгорьях и горах норма вырастает до <strong>600–700 мм</strong>. Самое комфортное время — <strong>июнь и июль</strong>.</div>
+  <!-- CLIMATE -->
+  <div class="info-panel" id="panel-climate">
+    <div class="info-card">
+      <h3>🌡️ Климат</h3>
+      <p>Климат Хакасии — <strong>резко континентальный</strong>. Это выражается в резких температурных перепадах между зимой и летом.</p>
+      <div class="stat-row" style="margin-bottom: 0.75rem;">
+        <div class="stat-chip" style="border-color: #74b9d4;"><strong>−19…−21°С</strong><span>зима (ср.)</span></div>
+        <div class="stat-chip" style="border-color: #74b9d4;"><strong>до −52°С</strong><span>абс. минимум</span></div>
+        <div class="stat-chip" style="border-color: #f4c542;"><strong>+18…+24°С</strong><span>лето (ср.)</span></div>
+        <div class="stat-chip" style="border-color: #f4c542;"><strong>до +38°С</strong><span>абс. максимум</span></div>
       </div>
+      <p><strong>Зима:</strong> длительная, холодная, по большей части сухая. Устойчивый снежный покров — уже к началу ноября.</p>
+      <p><strong>Лето:</strong> тёплое, особенно комфортное для сельского хозяйства и туризма. Июнь–август — лучшее время для визита.</p>
+      <p><strong>Весна:</strong> короткая, ночные заморозки до −3°С. <strong>Осень:</strong> сухая, солнечная, 8–10 дней с моросящими дождями в месяц.</p>
+      <p><strong>Осадки:</strong> около 300 мм в год на равнинах, до 600–700 мм в горах. Около 55–70% годовой нормы выпадает летом в виде ливней.</p>
+      <p><em>Самое комфортное время для посещения — июнь и июль.</em></p>
+      <p class="source-note">По материалам доклада; источники: nbcrs.org, hakasiya19.ru, priroda.ru</p>
     </div>
+  </div>
 
-    <!-- ── POPULATION ── -->
-    <div class="card" id="card-population">
-      <div class="card-title">👥 Население</div>
-      <div class="card-body">
-        <div class="stats">
-          <div class="stat"><span class="stat-n">411 тыс.</span><span class="stat-l">жителей в 1959 г.</span></div>
-          <div class="stat"><span class="stat-n">568 тыс.</span><span class="stat-l">жителей в 1989 г. (пик)</span></div>
-          <div class="stat"><span class="stat-n">34,6%</span><span class="stat-l">доля Абакана в нас. республики (2021)</span></div>
-          <div class="stat"><span class="stat-n">68,4%</span><span class="stat-l">урбанизация в 2021 г.</span></div>
-        </div>
-        <p>Население <strong>росло в советский период</strong> за счёт промышленного освоения и миграции. После распада СССР началось устойчивое сокращение, которое впоследствии стабилизировалось.</p>
-        <div class="hl">Доля Абакана постоянно растёт: <strong>13,7% в 1959 г. → 34,6% в 2021 г.</strong> Признак сильной концентрации населения в столице при оттоке из малых городов.</div>
-        <p>Пик урбанизации — <strong>72,49% в 1989 г.</strong> К 2021 г. показатель снизился до 68,4%, тогда как общероссийский достиг 74,79%.</p>
-        <p>Доля пустых сельских населённых пунктов — лишь <strong>2,58%</strong> (против 16,16% по России). Это объясняется молодостью освоения и сильными традициями сельской жизни (аалы и др.).</p>
+  <!-- POPULATION -->
+  <div class="info-panel" id="panel-population">
+    <div class="info-card">
+      <h3>👥 Население</h3>
+      <p>Население Хакасии <strong>росло весь советский период</strong> — с 411 тыс. чел. в 1959 г. до 568 тыс. чел. в 1989 г. — за счёт промышленного освоения и миграционного притока. После распада СССР началось устойчивое сокращение, которое затем стабилизировалось.</p>
+      <div class="stat-row">
+        <div class="stat-chip"><strong>411 тыс.</strong><span>население 1959</span></div>
+        <div class="stat-chip"><strong>568 тыс.</strong><span>население 1989</span></div>
+        <div class="stat-chip"><strong>~530 тыс.</strong><span>население 2021</span></div>
       </div>
+      <p style="margin-top:0.75rem;"><strong>Урбанизация:</strong> относительно высокая для Сибири. Динамика: 56,3% (1959) → 72,49% пик (1989) → 68,38% (2021). При этом общероссийский показатель продолжал расти до 74,79%.</p>
+      <p><strong>Доля Абакана</strong> постоянно растёт: с 13,7% (1959) до 34,6% (2021) — признак сильной концентрации населения в столице при оттоке из малых городов.</p>
+      <p><strong>Сельские НП:</strong> средняя людность — 623,9 чел. Доля безлюдных НП — всего <strong>2,58%</strong> (vs. 16,16% по России) — объясняется относительной молодостью освоения и традиционным укладом жизни в аалах.</p>
+      <p class="source-note">По материалам доклада (Приложение №1)</p>
     </div>
+  </div>
 
-    <!-- ── ECONOMY ── -->
-    <div class="card" id="card-economy">
-      <div class="card-title">🏭 Экономика</div>
-      <div class="card-body">
-        <p>Промышленность формирует около <strong>50% ВРП</strong>. Три взаимосвязанных кластера — основа:</p>
-        <div class="stats">
-          <div class="stat"><span class="stat-n">⛏️ Уголь</span><span class="stat-l">Минусинский угольный бассейн, СУЭК</span></div>
-          <div class="stat"><span class="stat-n">🔩 Алюминий</span><span class="stat-l">Саяногорский алюм. завод, РУСАЛ</span></div>
-          <div class="stat"><span class="stat-n">⚡ Энергия</span><span class="stat-l">Саяно-Шушенская ГЭС — самая мощная в России</span></div>
-          <div class="stat"><span class="stat-n">~4%</span><span class="stat-l">доля сельского хозяйства в ВРП</span></div>
-        </div>
-        <p>В республике <strong>6 официальных моногородов</strong> — при том, что городов всего 5 (80% городов — моногорода).</p>
-        <div class="cities">
-          <div class="city">
-            <h4>Черногорск (76 тыс.)</h4>
-            <p>СУЭК Хакасия (уголь). Близость к Абакану даёт частичную альтернативную занятость</p>
-          </div>
-          <div class="city">
-            <h4>Саяногорск (55 тыс.)</h4>
-            <p>РУСАЛ (алюминий) + Саяно-Шушенская ГЭС. Санкции ударили по экспорту алюминия</p>
-          </div>
-          <div class="city bad">
-            <h4>Сорск (13 тыс.) ⚠️</h4>
-            <p>Единственный в России комплекс по добыче молибдена. Под угрозой консервации. 80% бюджета — от одного предприятия</p>
-          </div>
-          <div class="city bad">
-            <h4>Абаза (17 тыс.) ⚠️</h4>
-            <p>Абаканский рудник (железная руда). Изолирован в горах. Альтернатив занятости нет</p>
-          </div>
-        </div>
-        <div class="hl">Высокая концентрация моногородов — <strong>наследие советского ресурсного освоения</strong>. Большинство уязвимы к санкциям. Реальная диверсификация — только у Черногорска.</div>
-      </div>
+  <!-- ECONOMY -->
+  <div class="info-panel" id="panel-economy">
+    <div class="info-card">
+      <h3>🏭 Экономика</h3>
+      <p>В отраслевой структуре доминирует <strong>промышленное производство</strong> — около половины ВРП. Фундамент — три взаимосвязанных кластера:</p>
+      <p>🪨 <strong>Угольная добыча</strong> (Минусинский бассейн) · ⚙️ <strong>Цветная металлургия</strong> (Саяногорский алюминиевый завод) · ⚡ <strong>Гидроэнергетика</strong> (Саяно-Шушенская ГЭС — самая мощная в России, даёт дешёвую энергию).</p>
+      <p>В экспорте доминируют металлы и металлообработка. С/Х даёт около <strong>4% ВРП</strong>, МСП — около <strong>20%</strong>.</p>
+      <p>В Хакасии <strong>6 моногородов</strong> из 5 городов (80% городского фонда):</p>
+      <table class="mono-table">
+        <thead>
+          <tr><th>Город</th><th>Нас.</th><th>Специализация</th><th>Статус</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Черногорск</td><td>76 тыс.</td><td>СУЭК Хакасия (уголь)</td><td class="status-stable">Стабильный</td></tr>
+          <tr><td>Саяногорск</td><td>55 тыс.</td><td>РУСАЛ (алюминий) + ГЭС</td><td class="status-stable">Стабильный</td></tr>
+          <tr><td>Сорск</td><td>13 тыс.</td><td>Молибден (РУСАЛ)</td><td class="status-hard">Сложный</td></tr>
+          <tr><td>Абаза</td><td>17 тыс.</td><td>Железная руда</td><td class="status-hard">Сложный</td></tr>
+          <tr><td>Туим (с.)</td><td>—</td><td>—</td><td class="status-hard">Сложный</td></tr>
+          <tr><td>Вершина Тёи</td><td>—</td><td>—</td><td class="status-hard">Сложный</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:0.75rem; font-size:0.85rem;">Реальная диверсификация есть лишь у Черногорска — за счёт близости к Абакану.</p>
+      <p class="source-note">По материалам доклада; источники: cyberleninka.ru, urban3p.ru</p>
     </div>
+  </div>
 
-    <!-- ── FAILED PROJECTS ── -->
-    <div class="card" id="card-projects">
-      <div class="card-title">🏗️ Несостоявшиеся проекты</div>
-      <div class="card-body">
-        <p>В 1970–80-е гг. Хакасия рассматривалась как важная база <strong>Саянского территориально-производственного комплекса</strong>. Саяно-Шушенская ГЭС должна была дать энергию для десятков предприятий. Распад СССР оставил многое нереализованным.</p>
-        <ul>
-          <li>
-            <strong>«Абаканвагонмаш»</strong> — проектировался как крупнейший вагоностроительный завод страны. Построены огромные корпуса, но после 1991 г. оказался слишком большим для новой экономики. Сейчас на его базе работает АО «<strong>РМ Рейл Абаканвагонмаш</strong>» в холдинге «РМ Рейл»
-          </li>
-          <li>
-            <strong>Туимский завод тугоплавких и цветных металлов</strong> — обеспечивал оборонную промышленность. В 1990-е деградировал, новые цеха не достроены, завод закрыт
-          </li>
-          <li>
-            <strong>Черногорский комбинат искусственных кож</strong> — должен был производить продукцию глубокой переработки для лёгкой промышленности. Не выдержал конкуренции с дешёвым импортом и обанкротился
-          </li>
-          <li>
-            <strong>Усть-Абаканский гидролизный завод</strong> — перерабатывал древесные отходы, выпускал технический спирт и кормовые дрожжи. В постсоветский период прекратил работу, корпуса стали руинами
-          </li>
-        </ul>
-        <div class="hl">Все эти проекты объединяет одно: советская логика глубокой переработки местного сырья столкнулась с рыночной реальностью 1990-х — и проиграла.</div>
-      </div>
+  <!-- FAILED PROJECTS -->
+  <div class="info-panel" id="panel-failed">
+    <div class="info-card">
+      <h3>🏚️ Несостоявшиеся проекты</h3>
+      <p>История Хакасии тесно связана с проектом <strong>Саянского территориально-производственного комплекса</strong> — одного из самых амбициозных советских индустриальных замыслов. Распад СССР и кризис 1990-х привели к тому, что большая часть планов осталась нереализованной.</p>
+      <p>📦 <strong>Абаканвагонмаш</strong> — должен был стать крупнейшим вагоностроительным предприятием страны. Огромные корпуса были построены, но после 1991-го проект оказался слишком крупным для новой экономики. Часть площадей по сей день пустует или недостроена. Сейчас там работает <em>АО «РМ Рейл Абаканвагонмаш»</em>.</p>
+      <p>🔩 <strong>Туимский завод тугоплавких металлов</strong> (Ширинский район) — в советское время снабжал оборонную промышленность. После сокращения госзаказов в 1990-е деградировал и был закрыт.</p>
+      <p>👜 <strong>Черногорский комбинат искусственных кож</strong> — часть советской модели «глубокой переработки» сырья. В конкуренции с дешёвым импортом оказался нежизнеспособным и обанкротился.</p>
+      <p>🌲 <strong>Усть-Абаканский гидролизный завод</strong> — перерабатывал древесные отходы, выпускал технический спирт и кормовые дрожжи. В постсоветский период закрылся, корпуса превратились в руины.</p>
+      <p class="source-note">По материалам доклада; источники: rmrail.ru, cyberleninka.ru и др.</p>
     </div>
+  </div>
 
-    <!-- ── HERITAGE ── -->
-    <div class="card" id="card-heritage">
-      <div class="card-title">🏛️ Культурное наследие</div>
-      <div class="card-body">
-        <p>В Хакасии <strong>более 100 объектов культурного наследия федерального значения</strong>: курганы, писаницы, каменные изваяния, древние поселения.</p>
-        <div class="hl">Горный массив <strong>«Оглахты»</strong> заповедника «Хакасский» — единственный претендент на список Всемирного наследия ЮНЕСКО. В <strong>2016 г.</strong> включён в предварительный список, в <strong>2017 г.</strong> заповедник получил статус <strong>биосферного резервата ЮНЕСКО</strong>.<br><small>Источник: zapovednik-khakassky.ru</small></div>
-        <div class="sites">
-          <div class="site">
-            <div class="site-ico">🗿</div>
-            <div class="site-text">
-              <h4>Салбыкский курган</h4>
-              <p>Крупный монументальный курган сармато-аланской культуры (V–III вв. до н. э.). Масштаб и архитектура подчёркивают религиозно-политическое значение памятника</p>
-            </div>
-          </div>
-          <div class="site">
-            <div class="site-ico">🪨</div>
-            <div class="site-text">
-              <h4>Боярская писаница</h4>
-              <p>Наскальные изображения бронзового и раннего железного веков: сцены охоты, ритуалов и фантастических существ</p>
-            </div>
-          </div>
-          <div class="site">
-            <div class="site-ico">🏰</div>
-            <div class="site-text">
-              <h4>Крепость «Чебаки»</h4>
-              <p>Горное сооружение бронзовой эпохи с каменными стенами и жилыми нишами. Найдена керамика окуневской культуры. Сочетало черты крепости, убежища и культового места</p>
-            </div>
-          </div>
-          <div class="site">
-            <div class="site-ico">⛩️</div>
-            <div class="site-text">
-              <h4>Уйбатский Чаа-тас</h4>
-              <p>Погребальный комплекс с курганами от VII в. до н. э. до IX в. н. э. Многоугольные ограждения из плит и высокие стелы отражают социальное устройство древних кыргызов</p>
-            </div>
-          </div>
-        </div>
-      </div>
+  <!-- HERITAGE -->
+  <div class="info-panel" id="panel-heritage">
+    <div class="info-card">
+      <h3>🗿 Памятники культурного наследия</h3>
+      <p>В Хакасии нет официальных объектов ЮНЕСКО, однако <strong>горный массив «Оглахты»</strong> с петроглифами заповедника «Хакасский» включён в <em>предварительный список</em> Всемирного наследия ЮНЕСКО (2016). В 2017 году заповедник получил статус <strong>биосферного резервата ЮНЕСКО</strong>.</p>
+      <p>Петроглифы Оглахт относятся к эпохе раннего железа и бронзового века — один из крупнейших в Сибири памятников наскального искусства: тысячи фигур и композиций.</p>
+      <p>На территории республики — <strong>более 100 объектов культурного наследия федерального значения</strong>. Ключевые:</p>
+      <p>🏔️ <strong>Салбыкский курган</strong> — крупный монументальный курган сармато-аланской культуры (V–III вв. до н.э.), отражает религиозно-политическое значение.</p>
+      <p>🎨 <strong>Боярская писаница</strong> — скальный памятник с наскальными изображениями бронзового и раннего железного веков: охота, ритуалы, фантастические существа.</p>
+      <p>🏰 <strong>Крепость «Чебаки»</strong> — горное сооружение бронзовой эпохи, сочетает черты крепости, убежища и культового места; найдена керамика окуневской культуры.</p>
+      <p>🪨 <strong>Уйбатский Чаа-тас</strong> — погребальный комплекс VII в. до н.э. — IX в. н.э. Многоугольные ограждения из плит и высокие стелы отражают социальное устройство древних кыргызов.</p>
+      <p class="source-note">По материалам доклада; источники: zapovednik-khakassky.ru, ookn19.ru</p>
     </div>
+  </div>
 
-    <!-- ── BRANDING ── -->
-    <div class="card" id="card-branding">
-      <div class="card-title">✨ Региональный брендинг</div>
-      <div class="card-body">
-        <p>Брендинг строится вокруг образа <strong>«земли стихий»</strong> — сочетание природы, древней истории и туристической привлекательности. Официально используются два направления:</p>
-        <div class="hl">
-          🏔️ <strong>«Хакасия. Земля пяти стихий»</strong> — туристический бренд (2020 г.)<br>
-          🏷️ <strong>«Сделано в Хакасии»</strong> — знак качества местных производителей
-        </div>
-        <p><strong>«Земля пяти стихий»</strong> закрепляет за регионом образ территории, где соединяются <em>степи, озёра, горы, археологические памятники и традиционная культура</em>. Продаётся не отдельный объект, а целостное впечатление от региона.</p>
-        <p><strong>«Сделано в Хакасии»</strong> — знак разрешается бесплатно размещать местным производителям на товарах, транспорте, одежде и документации. Работает как символ местного происхождения и доверия.</p>
-        <div class="hl">Народный слоган, ставший вирусным: <strong>«Хакасия — это ах! Это ух! Это вау! Ахухвау!»</strong> 😄<br><small>Источник: svoboda.org, gazeta19.ru</small></div>
-      </div>
+  <!-- BRANDING -->
+  <div class="info-panel" id="panel-brand">
+    <div class="info-card">
+      <h3>✨ Региональный брендинг</h3>
+      <p>Брендинг Хакасии строится вокруг образа <strong>«Земли стихий»</strong> — сочетание природы, древней истории и туристической привлекательности. На официальном уровне одновременно используются два подхода.</p>
+      <p>🌿 <strong>«Хакасия. Земля пяти стихий»</strong> — основной туристический бренд, представлен в 2020 году. Закрепляет образ территории, где соединяются степи, озёра, горы, археологические памятники и традиционная культура. Новый слоган: <em>«Хакасия — это ах! Это ух! Это вау! Ахухвау!»</em></p>
+      <p>🏷️ <strong>«Сделано в Хакасии»</strong> — знак качества, который местные производители могут бесплатно размещать на товарах, транспорте, одежде и документах. Работает как символ местного происхождения и доверия к продукции.</p>
+      <p>Хакасия выстраивает <strong>два взаимодополняющих образа</strong>: как туристическое пространство и как территория, где «местное» означает качество.</p>
+      <p class="source-note">По материалам доклада; источники: gazeta19.ru, madeinkhakassia.ru, svoboda.org</p>
     </div>
+  </div>
 
-    <!-- ── MAP ── -->
-    <div class="card" id="card-map">
-      <div class="card-title">🗺️ Интерактивная карта Хакасии</div>
-      <div class="card-body">
-        <div id="map"></div>
-        <div class="map-legend">
-          <strong style="color:var(--text-m);font-size:.8rem">Обозначения:</strong>
-          <span class="leg-item"><span class="leg-dot" style="background:#c0392b"></span>Столица</span>
-          <span class="leg-item"><span class="leg-dot" style="background:#2d5a27"></span>Моногород (стаб.)</span>
-          <span class="leg-item"><span class="leg-dot" style="background:#e67e22"></span>Моногород (сложн.)</span>
-          <span class="leg-item"><span class="leg-dot" style="background:#5b8dd9"></span>Прочие города/пгт</span>
-        </div>
-        <p class="map-note">Нажимай на маркеры — королёк расскажет о каждом городе из доклада!</p>
-      </div>
-    </div>
-
-  </div><!-- /content -->
-</div><!-- /wrap -->
+</div>
 
 <footer>
-  Интерактивный доклад по географии · Республика Хакасия · Данные из официальных источников
+  Сделано для урока географии · Данные из доклада группы · <span>Республика Хакасия 🌿</span>
 </footer>
 
 <script>
-const msgs = {
-  welcome:    {tag:'Привет!',       txt:'Чирик! Я — желтоголовый королёк, маленький житель хакасской тайги! Нажми на раздел слева, и я расскажу тебе всё о моей республике. <strong>Ахухвау!</strong> 🌲'},
-  history:    {tag:'История',       txt:'Хакасия вошла в состав России непросто! Сначала джунгары ослабили Хонгорай, потом Пётр I воспользовался ситуацией. Официально — с <strong>20 августа 1727 года</strong>. Долгий путь, чирик-чик! 📜'},
-  resources:  {tag:'Ресурсы',       txt:'Богатств здесь хватает: золото, уголь, молибден, алюминий... В советское время из аграрного края сделали настоящий <strong>индустриальный регион</strong>! Чирик! ⛏️'},
-  climate:    {tag:'Климат',        txt:'Климат у нас резко континентальный! Зима до <strong>−52°С</strong>, зато лето — тёплое и солнечное. Лучшее время приехать — <strong>июнь и июль</strong>. Я как раз тогда особенно звонко пою! 🎵'},
-  population: {tag:'Население',     txt:'В советское время нас было <strong>568 тысяч</strong>! Потом стало меньше... Зато Абакан растёт — его доля уже <strong>34,6%</strong> населения республики. Как птицы тянутся к тёплым местам! 🐦'},
-  economy:    {tag:'Экономика',     txt:'Три кита нашей экономики: <strong>уголь, алюминий и гидроэнергия</strong>! Саяно-Шушенская ГЭС — самая мощная в России! Но у нас 6 моногородов из 5... звучит странно? Читай карточку! ⚡'},
-  projects:   {tag:'Несост. проекты',txt:'В советское время были большие планы: вагоностроение, тугоплавкие металлы, кожевенное производство... Распад СССР всё остановил. Грустно, как пустое гнездо осенью... 🍂'},
-  heritage:   {tag:'Культ. наследие',txt:'Ах, как я люблю петь над древними курганами! <strong>Оглахты</strong> — претендент на ЮНЕСКО! <strong>Салбыкский курган, Боярская писаница</strong>... 100+ памятников федерального значения! 🏛️'},
-  branding:   {tag:'Брендинг',      txt:'Знаешь наш девиз? <strong>«Земля пяти стихий»</strong>! И народный: «Ах! Ух! Вау! <strong>Ахухвау!</strong>» — прямо как я пою каждое утро! А ещё «Сделано в Хакасии» — гордость местных! ✨'},
-  map:       {tag:'Карта республики', txt:'Чирик! Посмотри, где я живу! Нажимай на маркеры — расскажу о каждом городе из нашего доклада. Красный — столица <strong>Абакан</strong>, оранжевые — моногорода в сложном положении! 🗺️'}
-};
-
-function go(id) {
-  document.querySelectorAll('.tbtn').forEach(b => b.classList.remove('active'));
-  document.getElementById('btn-' + id).classList.add('active');
-
-  const m = msgs[id];
-  document.getElementById('btag').textContent = m.tag;
-  const btext = document.getElementById('btext');
-  btext.style.opacity = 0;
-  setTimeout(() => { btext.innerHTML = m.txt; btext.style.opacity = 1; }, 180);
-
-  document.querySelectorAll('.card').forEach(c => c.classList.remove('on'));
-  const card = document.getElementById('card-' + id);
-  if (card) card.classList.add('on');
-
-  // re-trigger bounce
-  const s = document.querySelector('.bird-svg');
-  s.style.animation = 'none';
-  setTimeout(() => s.style.animation = 'bob 2.8s ease-in-out infinite', 20);
-}
-
-function chirp() {
-  const s = document.querySelector('.bird-svg');
-  s.style.animation = 'excited .45s ease-in-out 3';
-  setTimeout(() => s.style.animation = 'bob 2.8s ease-in-out infinite', 1500);
-}
-
-document.getElementById('card-welcome').classList.add('on');
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script>
-var mapInit = false;
-
-function initMap() {
-  if (mapInit) return;
-  mapInit = true;
-
-  var map = L.map('map', {scrollWheelZoom: true}).setView([53.55, 90.5], 7);
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    maxZoom: 13
-  }).addTo(map);
-
-  // Load real boundary from Nominatim (OpenStreetMap)
-  var borderLayer = null;
-  var loadingDiv = document.createElement('div');
-  loadingDiv.id = 'map-loading';
-  loadingDiv.style.cssText = 'position:absolute;bottom:12px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(255,255,255,.92);padding:5px 14px;border-radius:20px;font-size:.78rem;color:#2d5a27;font-family:Geologica,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.15)';
-  loadingDiv.textContent = '🐦 Загружаю границы Хакасии...';
-  document.getElementById('map').appendChild(loadingDiv);
-
-  fetch('https://nominatim.openstreetmap.org/search?q=Республика+Хакасия&format=geojson&polygon_geojson=1&limit=1&countrycodes=ru', {
-    headers: {'Accept-Language': 'ru', 'User-Agent': 'KhakassiaGeoReport/1.0'}
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(data){
-    loadingDiv.remove();
-    if (!data.features || !data.features.length) return;
-    borderLayer = L.geoJSON(data.features[0], {
-      style: {
-        color: '#2d5a27', weight: 2.5,
-        fillColor: '#a8d5a2', fillOpacity: 0.22,
-        dashArray: '6,4'
-      }
-    }).addTo(map);
-    borderLayer.bindPopup('<div class="pop-title">Республика Хакасия</div><span class="pop-tag">Площадь: 61 569 км²</span><br>Субъект РФ с 1992 г. Столица — Абакан.');
-  })
-  .catch(function(){
-    loadingDiv.textContent = '⚠️ Не удалось загрузить границы';
-    setTimeout(function(){ loadingDiv.remove(); }, 3000);
-  });
-
-  function mkIcon(color) {
-    return L.divIcon({
-      className:'',
-      html:'<div style="width:14px;height:14px;border-radius:50%;background:'+color+';border:2.5px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,.35)"></div>',
-      iconSize:[14,14], iconAnchor:[7,7], popupAnchor:[0,-10]
-    });
+  // Stars
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 30; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*80}%;animation-delay:${Math.random()*3}s;animation-duration:${1.5+Math.random()*2}s`;
+    starsEl.appendChild(s);
   }
 
-  var cities = [
-    {
-      ll:[53.7209,91.4422], color:'#c0392b', name:'Абакан',
-      tag:'Столица республики', tagClass:'',
-      info:'Столица Республики Хакасия. Доля в населении республики выросла с <b>13,7%</b> (1959 г.) до <b>34,6%</b> (2021 г.) — признак концентрации населения в региональном центре.'
-    },
-    {
-      ll:[53.8167,91.2833], color:'#2d5a27', name:'Черногорск',
-      tag:'Моногород — стабильное положение', tagClass:'',
-      info:'76 тыс. жителей. <b>СУЭК Хакасия</b> (уголь). В 1990-е утратил непрофильные производства, но близость к Абакану даёт частичную альтернативную занятость.'
-    },
-    {
-      ll:[53.0828,91.4141], color:'#2d5a27', name:'Саяногорск',
-      tag:'Моногород — стабильное положение', tagClass:'',
-      info:'55 тыс. жителей. <b>РУСАЛ</b> (алюминий) + <b>Саяно-Шушенская ГЭС</b> — самая мощная в России, дающая дешёвую электроэнергию. Санкции ударили по экспорту алюминия.'
-    },
-    {
-      ll:[54.003,90.255], color:'#e67e22', name:'Сорск',
-      tag:'Моногород — сложное положение ⚠️', tagClass:'warn',
-      info:'13 тыс. жителей. <b>Единственный в России</b> комплекс по добыче и переработке молибдена. ~80% бюджета от одного предприятия. Под угрозой консервации.'
-    },
-    {
-      ll:[52.6539,90.0867], color:'#e67e22', name:'Абаза',
-      tag:'Моногород — сложное положение ⚠️', tagClass:'warn',
-      info:'17 тыс. жителей. <b>Абаканский рудник</b> (железная руда). Изолирован в горах, тяжёлая транспортная доступность, альтернатив занятости нет.'
-    },
-    {
-      ll:[54.38,89.81], color:'#e67e22', name:'Туим (пгт)',
-      tag:'Моногород — сложное положение ⚠️', tagClass:'warn',
-      info:'В советское время — <b>Туимский завод тугоплавких и цветных металлов</b>. После 1990-х завод закрыт, новые цеха остались недостроенными. Включён в перечень моногородов.'
-    },
-    {
-      ll:[54.058,90.686], name:'Сонский / Вершина Тёи',
-      color:'#e67e22', tag:'Моногород — сложное положение ⚠️', tagClass:'warn',
-      info:'пгт <b>Вершина Тёи</b> относится к моногородам с наиболее сложным социально-экономическим положением по данным Минэкономразвития РФ.'
-    },
-    {
-      ll:[54.495,90.194], color:'#5b8dd9', name:'Шира',
-      tag:'Посёлок городского типа', tagClass:'',
-      info:'Районный центр Ширинского района. Известен близостью к <b>солёным озёрам</b> — популярный рекреационный объект и туристический кластер республики.'
-    },
-    {
-      ll:[54.78,89.72], color:'#5b8dd9', name:'Копьево',
-      tag:'Посёлок', tagClass:'',
-      info:'Административный центр Орджоникидзевского района в северной части республики.'
-    },
-    {
-      ll:[54.33,89.73], color:'#5b8dd9', name:'Коммунар',
-      tag:'Посёлок городского типа', tagClass:'',
-      info:'Населённый пункт в Орджоникидзевском районе. Добыча полезных ископаемых.'
-    },
-    {
-      ll:[53.14,90.55], color:'#5b8dd9', name:'Аскиз',
-      tag:'Районный центр', tagClass:'',
-      info:'Центр <b>Аскизского района</b> — одного из крупнейших и наиболее хакасских по этническому составу районов республики. Важный культурный центр хакасского народа.'
-    },
-    {
-      ll:[52.42,91.38], color:'#5b8dd9', name:'Черемушки',
-      tag:'Посёлок', tagClass:'',
-      info:'Посёлок при <b>Саяно-Шушенской ГЭС</b> — самой мощной гидроэлектростанции России (6 400 МВт). ГЭС обеспечивает дешёвой электроэнергией алюминиевое производство Саяногорска.'
-    },
+  const birdWrap = document.getElementById('birdWrap');
+  const speechText = document.getElementById('speechText');
+  const emotionBadge = document.getElementById('emotionBadge');
+
+  const svgs = {
+    normal: document.getElementById('birdNormal'),
+    happy:  document.getElementById('birdHappy'),
+    sad:    document.getElementById('birdSad'),
+    chirp:  document.getElementById('birdChirp'),
+  };
+
+  function setMood(mood, duration) {
+    Object.values(svgs).forEach(s => s.style.display = 'none');
+    svgs[mood].style.display = 'block';
+    birdWrap.classList.remove('happy','sad','talking','chirping');
+    if (mood === 'happy')  birdWrap.classList.add('happy');
+    if (mood === 'sad')    birdWrap.classList.add('sad');
+    if (mood === 'chirp') birdWrap.classList.add('chirping');
+    const badges = { happy: '🎉', sad: '😢', chirp: '🎵', normal: '' };
+    emotionBadge.textContent = badges[mood] || '';
+    emotionBadge.style.display = badges[mood] ? 'block' : 'none';
+    if (duration) setTimeout(() => setMood('normal'), duration);
+  }
+
+  function setSpeech(html, mood, badgeDuration) {
+    speechText.innerHTML = html;
+    setMood(mood, badgeDuration);
+  }
+
+  const chirpJokes = [
+    { chirp: 'Чирик-чирик-чирик-чирик-чир...',
+      punchline: `...ик! Ой, это я не пел — это у меня просто факты кончились и включился фоновый режим 😅<br><br>А если серьёзно: знаешь, что официальный слоган Хакасии — <span class="highlight">«Ахухвау!»</span>? Прямо как моя песня! 🎉`, mood: 'happy' },
+    { chirp: 'Чирик... чирик... чирик...',
+      punchline: `Это я репетировал как петь гимн Хакасии. Провалил прослушивание. Взяли медведя 🐻<br><br>Зато я знаю, что в республике <span class="number">2,58%</span> безлюдных деревень — рекордно мало для России! У меня вот <span class="number">0%</span> конкурентов. Пока.`, mood: 'sad' },
+    { chirp: '♪ ЧИ-РИК! ♪ ЧИ-РИК! ♪',
+      punchline: `Это была моя версия «Земли пяти стихий» в жанре фолк-рок.<br><br>Продюсер сказал: «Неплохо, но добавь угля». Логично — <span class="highlight">Минусинский угольный бассейн</span> кормит полреспублики! ⛏️`, mood: 'happy' },
+    { chirp: 'Чик... чик... чик...',
+      punchline: `Простите, это не чириканье. Это я считаю <span class="number">100+</span> памятников культурного наследия в Хакасии.<br><br><span class="highlight">Салбыкский курган</span> — V век до нашей эры! А я живу в XXI веке и всё равно ем тех же жучков 😔`, mood: 'sad' },
+    { chirp: '♫ Чи-чи-рик-рик-чик! ♫',
+      punchline: `Это была ария «Зима в Хакасии». Партия сопрано.<br><br>Текст такой: «Мороз <span class="number">−52°С</span>, снег с ноября, ветер с Саян...» 🥶 Хорошо хоть летом до <span class="number">+38°С</span>! Я за лето!`, mood: 'happy' },
   ];
 
-  cities.forEach(function(c) {
-    L.marker(c.ll, {icon: mkIcon(c.color)}).addTo(map)
-      .bindPopup(
-        '<div class="pop-title">' + c.name + '</div>' +
-        '<span class="pop-tag ' + c.tagClass + '">' + c.tag + '</span><br>' +
-        c.info
-      );
-  });
+  let chirpIdx = 0;
+  let isChirping = false;
+  let clickCount = 0;
 
-  // Saiano-Shushenskaya GES marker (star shape)
-  L.marker([52.83, 91.37], {
-    icon: L.divIcon({
-      className:'',
-      html:'<div style="font-size:20px;line-height:1;filter:drop-shadow(0 1px 3px rgba(0,0,0,.4))">⚡</div>',
-      iconSize:[20,20], iconAnchor:[10,10], popupAnchor:[0,-10]
-    })
-  }).addTo(map).bindPopup(
-    '<div class="pop-title">Саяно-Шушенская ГЭС</div>' +
-    '<span class="pop-tag">Самая мощная ГЭС России</span><br>' +
-    'Установленная мощность — <b>6 400 МВт</b>. Обеспечивает дешёвой электроэнергией весь алюминиевый кластер Саяногорска. Один из трёх ключевых экономических кластеров Хакасии.'
-  );
-
-  // Oглахты label
-  L.marker([53.47, 91.17], {
-    icon: L.divIcon({
-      className:'',
-      html:'<div style="font-size:18px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.4))">🏛️</div>',
-      iconSize:[18,18], iconAnchor:[9,9], popupAnchor:[0,-10]
-    })
-  }).addTo(map).bindPopup(
-    '<div class="pop-title">Горный массив Оглахты</div>' +
-    '<span class="pop-tag">Претендент на ЮНЕСКО</span><br>' +
-    'Скальные петроглифы заповедника «Хакасский». В <b>2016 г.</b> включён в предварительный список Всемирного наследия ЮНЕСКО. В <b>2017 г.</b> заповедник получил статус биосферного резервата ЮНЕСКО.'
-  );
-
-  // Salbyky Kurgan
-  L.marker([53.97, 90.60], {
-    icon: L.divIcon({
-      className:'',
-      html:'<div style="font-size:18px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.4))">🗿</div>',
-      iconSize:[18,18], iconAnchor:[9,9], popupAnchor:[0,-10]
-    })
-  }).addTo(map).bindPopup(
-    '<div class="pop-title">Салбыкский курган</div>' +
-    '<span class="pop-tag">Объект культурного наследия</span><br>' +
-    'Крупный монументальный курган сармато-аланской культуры (<b>V–III вв. до н. э.</b>). Масштаб и архитектура подчёркивают его религиозно-политическое значение.'
-  );
-}
-
-// Intercept go() to init map on first open
-var _goOrig = go;
-go = function(id) {
-  _goOrig(id);
-  if (id === 'map') {
-    setTimeout(initMap, 80);
+  function doChirpJoke() {
+    if (isChirping) return;
+    isChirping = true;
+    const joke = chirpJokes[chirpIdx % chirpJokes.length];
+    chirpIdx++;
+    setSpeech(`<span style="font-size:1.05rem;color:#d4a017;font-weight:800;">${joke.chirp}</span><div class="speech-hint" style="margin-top:0.5rem;">... 🎵</div>`, 'chirp');
+    setTimeout(() => {
+      setSpeech(joke.punchline + `<div class="speech-hint">👇 Выбери тему или нажми снова</div>`, joke.mood, 4000);
+      isChirping = false;
+    }, 1800);
   }
-};
+
+  const greetings = [
+    { text: `Привет! Я <span class="highlight">Королёк</span> — самая маленькая птица России 🐦<br><br>Вешу всего <span class="number">6 грамм</span>, но знаний о Хакасии — на тонну! Выбирай тему ниже 👇<div class="speech-hint">Или нажимай на меня снова — у меня есть сюрпризы 😏</div>`, mood: 'normal' },
+    { text: `Чирик! Официальный слоган Хакасии: <span class="highlight">«Хакасия — это ах! Это ух! Это вау! Ахухвау!»</span> 🎉<br><br>Это реально написано на туристических материалах. Серьёзно! Выбирай тему!`, mood: 'happy' },
+    { text: `Ой... я тут подумал о зиме в Хакасии 😢<br><br><span class="number">−52°С</span> абсолютный минимум. Я маленькая птица весом <span class="number">6 грамм</span>. Мне там нелегко. Хорошо, что летом <span class="number">+38°С</span>...`, mood: 'sad' },
+    { text: `А ты знал: в Хакасии <span class="number">6 моногородов</span>, хотя городов всего <span class="number">5</span>! 😅<br><br>Математика простая: одно <span class="highlight">село Туим</span> тоже в списке. Выбирай тему!`, mood: 'happy' },
+  ];
+
+  let greetIdx = 0;
+
+  const topicMessages = {
+    history: { label: '🏯 История', mood: 'normal',
+      text: `Чирик! О, история Хакасии очень интересная! 🌟<br><br>Борьба за эти земли шла между <span class="highlight">Русским царством</span> и Хонгораем с джунгарами. В <span class="number">1703</span> году джунгары угнали хакасов в степи — это ослабило сопротивление.<br><br>В <span class="number">1707</span> году Пётр I издал указ о строительстве <span class="highlight">Абаканского острога</span>. Официально Хакасия вошла в Россию <span class="number">20 августа 1727 года</span> по пограничному договору с Китаем!` },
+    resources: { label: '⛏️ Ресурсы', mood: 'happy',
+      text: `Чирик-чирик! Хакасия богата природными сокровищами! 🪨<br><br>Исторически осваивали <span class="highlight">золото, железо, соль и пушнину</span>. К 1822 году здесь было <span class="number">90 русских поселений</span> — редкость для Сибири!<br><br>Сегодня основа — <span class="highlight">уголь, алюминий, молибден и гидроэнергетика</span>. Саяно-Шушенская ГЭС — самая мощная в России!` },
+    climate: { label: '🌡️ Климат', mood: 'sad',
+      text: `Чирик... Климат тут резко континентальный. Я прячусь под ёлками зимой 🌨️<br><br>Зимой: <span class="number">−19…−21°С</span> в среднем, а минимум доходил до <span class="number">−52°С</span>! Для меня — катастрофа 😢<br><br>Летом же жарко: <span class="number">+18…+24°С</span>, бывает до <span class="number">+38°С</span>. Лучшее время для туризма — <span class="highlight">июнь и июль</span> 🌞` },
+    population: { label: '👥 Население', mood: 'normal',
+      text: `Чирик! Живут здесь немного, но интересно! 🏘️<br><br>В советское время население росло: с <span class="number">411 тыс.</span> (1959) до <span class="number">568 тыс.</span> (1989). После распада СССР стабилизировалось.<br><br>Доля <span class="highlight">Абакана</span> выросла с 13,7% до <span class="number">34,6%</span> — столица притягивает людей. А безлюдных сёл почти нет — всего <span class="number">2,58%</span>!` },
+    economy: { label: '🏭 Экономика', mood: 'normal',
+      text: `Чирик-чирик! Экономика держится на трёх китах! 🏭<br><br><span class="highlight">Уголь + Алюминий + ГЭС</span> — вот основа. Промышленность даёт около <span class="number">половины ВРП</span>.<br><br>Но есть проблема: <span class="number">6 моногородов</span> из 5 городов (80%!) — все зависят от одной корпорации. Реальная диверсификация — только у <span class="highlight">Черногорска</span>!` },
+    failed: { label: '🏚️ Несост. проекты', mood: 'sad',
+      text: `Чирик... Грустная история. Советские мечты... 😔<br><br><span class="highlight">Абаканвагонмаш</span> должен был стать крупнейшим вагоностроительным заводом — цеха построили, но 1990-е всё сломали. <span class="highlight">Туимский завод</span> тугоплавких металлов тоже закрылся.<br><br>А <span class="highlight">гидролизный завод</span> в Усть-Абакане стал руинами. Столько надежд... 😢` },
+    heritage: { label: '🗿 Наследие', mood: 'happy',
+      text: `Чирик! Я живу среди тысячелетней истории! 🗿<br><br><span class="highlight">«Оглахты»</span> — в предварительном списке ЮНЕСКО с 2016 года! Петроглифы бронзового века — тысячи фигур!<br><br>Здесь больше <span class="number">100 памятников</span> федерального значения. <span class="highlight">Салбыкский курган</span> (V–III вв. до н.э.), <span class="highlight">Боярская писаница</span>, крепость <span class="highlight">«Чебаки»</span>! 🎉` },
+    brand: { label: '✨ Брендинг', mood: 'happy',
+      text: `Чирик! Хакасия решила заявить о себе миру! 🌿<br><br>С 2020 года работает бренд <span class="highlight">«Земля пяти стихий»</span>. И главный слоган: <span class="highlight">«Хакасия — это ах! Это ух! Это вау! Ахухвау!»</span> 😄<br><br>Плюс знак <span class="highlight">«Сделано в Хакасии»</span> для местных — бесплатно как знак качества!` },
+  };
+
+  let activePanel = null;
+  let activeBtn = null;
+
+  function showTopic(key, btn) {
+    if (activePanel) document.getElementById('panel-' + activePanel).classList.remove('visible');
+    if (activeBtn) activeBtn.classList.remove('active');
+    if (activePanel === key) { activePanel = null; activeBtn = null; birdGreet(); return; }
+    activePanel = key; activeBtn = btn;
+    btn.classList.add('active');
+    document.getElementById('panel-' + key).classList.add('visible');
+    const msg = topicMessages[key];
+    setSpeech(`<div class="topic-label">${msg.label}</div>` + msg.text, msg.mood, msg.mood !== 'normal' ? 4000 : null);
+    document.getElementById('panel-' + key).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function birdGreet() {
+    if (isChirping) return;
+    clickCount++;
+    if (clickCount % 3 === 0) { doChirpJoke(); return; }
+    const g = greetings[greetIdx % greetings.length];
+    greetIdx++;
+    setSpeech(g.text + `<div class="speech-hint">👇 Нажми на тему или кликни снова</div>`, g.mood, g.mood !== 'normal' ? 4000 : null);
+  }
+
+  setMood('normal');
 </script>
 </body>
 </html>
