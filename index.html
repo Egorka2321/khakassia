@@ -842,6 +842,11 @@
       <span class="topic-title">Брендинг</span>
       <span class="topic-sub">Земля пяти стихий</span>
     </button>
+    <button class="topic-btn" onclick="showTopic('flag', this)">
+      <span class="topic-icon">🚩</span>
+      <span class="topic-title">Флаг</span>
+      <span class="topic-sub">Символика республики</span>
+    </button>
   </div>
 
   <!-- INFO PANELS -->
@@ -985,6 +990,36 @@
     </div>
   </div>
 
+  <!-- FLAG -->
+  <div class="info-panel" id="panel-flag">
+    <div class="info-card">
+      <h3>🚩 Флаг Республики Хакасия</h3>
+      <div style="margin-bottom:1.25rem;">
+        <svg viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:340px;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.13);">
+          <rect x="0" y="0" width="75" height="150" fill="#1a8a2e"/>
+          <rect x="75" y="0" width="225" height="50" fill="#1a5ea8"/>
+          <rect x="75" y="50" width="225" height="50" fill="#ffffff"/>
+          <rect x="75" y="100" width="225" height="50" fill="#c0281a"/>
+          <circle cx="37" cy="75" r="18" fill="#f4c030"/>
+          <circle cx="37" cy="75" r="12" fill="#1a8a2e"/>
+          <circle cx="37" cy="75" r="6" fill="#f4c030"/>
+          <rect x="20" y="73" width="34" height="4" rx="2" fill="#1a8a2e"/>
+          <rect x="35" y="57" width="4" height="36" rx="2" fill="#1a8a2e"/>
+          <rect x="22" y="62" width="4" height="26" rx="2" fill="#1a8a2e" transform="rotate(45 24 75)"/>
+          <rect x="22" y="62" width="4" height="26" rx="2" fill="#1a8a2e" transform="rotate(-45 50 75)"/>
+        </svg>
+      </div>
+      <p>Флаг республики принят в <strong>1992 году</strong>. Прямоугольное полотнище с вертикальной зелёной полосой у древка (¼ ширины) и тремя горизонтальными полосами — синей, белой и красной.</p>
+      <div class="stat-row">
+        <div class="stat-chip" style="border-color:#1a8a2e;"><strong style="color:#1a8a2e;">Зелёный</strong><span>природа, леса и горы</span></div>
+        <div class="stat-chip" style="border-color:#1a5ea8;"><strong style="color:#1a5ea8;">Синий</strong><span>небо, реки, озёра</span></div>
+        <div class="stat-chip" style="border-color:#aaa;"><strong style="color:#555;">Белый</strong><span>мир и единство</span></div>
+        <div class="stat-chip" style="border-color:#c0281a;"><strong style="color:#c0281a;">Красный</strong><span>связь с Россией</span></div>
+      </div>
+      <p style="margin-top:0.75rem;">В центре зелёной полосы — <strong>золотой солярный знак</strong>: древний хакасский символ солнца, известный по наскальным рисункам бронзового века.</p>
+    </div>
+  </div>
+
 </div>
 
 <footer>
@@ -1100,8 +1135,7 @@
     chirpIdx++;
     setSpeech(`<span style="font-size:1.05rem;color:#d4a017;font-weight:800;">${joke.chirp}</span><div class="speech-hint" style="margin-top:0.5rem;">... 🎵</div>`, 'chirp', null, false);
     setTimeout(() => {
-      const isAhuhvau = joke.punchline.includes('Ахухвау');
-      setSpeech(joke.punchline + `<div class="speech-hint">👇 Выбери тему или нажми снова</div>`, joke.mood, 4000, isAhuhvau);
+      setSpeech(joke.punchline + `<div class="speech-hint">👇 Выбери тему или нажми снова</div>`, joke.mood, 4000, false);
       isChirping = false;
     }, 1800);
   }
@@ -1130,7 +1164,9 @@
       text: `Чирик... Грустная история. Советские мечты... 😔<br><br><span class="highlight">Абаканвагонмаш</span> должен был стать крупнейшим вагоностроительным заводом — цеха построили, но 1990-е всё сломали. <span class="highlight">Туимский завод</span> тугоплавких металлов тоже закрылся.<br><br>А <span class="highlight">гидролизный завод</span> в Усть-Абакане стал руинами. Столько надежд... 😢` },
     heritage: { label: '🗿 Наследие', mood: 'happy',
       text: `Чирик! Я живу среди тысячелетней истории! 🗿<br><br><span class="highlight">«Оглахты»</span> — в предварительном списке ЮНЕСКО с 2016 года! Петроглифы бронзового века — тысячи фигур!<br><br>Здесь больше <span class="number">100 памятников</span> федерального значения. <span class="highlight">Салбыкский курган</span> (V–III вв. до н.э.), <span class="highlight">Боярская писаница</span>, крепость <span class="highlight">«Чебаки»</span>! 🎉` },
-    brand: { label: '✨ Брендинг', mood: 'happy', flagMode: true,
+    flag: { label: '🚩 Флаг', mood: 'happy', flagMode: true,
+      text: `Чирик! Смотри, какой красивый флаг! И я в нём вижу себя — зелёный, как тайга, где я живу 🌿<br><br>Флаг состоит из <span class="highlight">четырёх цветов</span>:<br>🟩 <span class="highlight">Зелёный</span> — природа, леса и горы Хакасии<br>🟦 <span class="highlight">Синий</span> — небо, реки и озёра<br>⬜ <span class="highlight">Белый</span> — мир и единство народов<br>🟥 <span class="highlight">Красный</span> — исторические связи с Россией<br><br>А золотое солнце слева — древний хакасский солярный символ. Ему тысячи лет! ☀️` },
+    brand: { label: '✨ Брендинг', mood: 'happy',
       text: `Чирик! Хакасия решила заявить о себе миру! 🌿<br><br>С 2020 года работает бренд <span class="highlight">«Земля пяти стихий»</span>. И главный слоган: <span class="highlight">«Хакасия — это ах! Это ух! Это вау! Ахухвау!»</span> 😄<br><br>Плюс знак <span class="highlight">«Сделано в Хакасии»</span> для местных — бесплатно как знак качества!` },
   };
 
@@ -1156,8 +1192,7 @@
     if (clickCount % 3 === 0) { doChirpJoke(); return; }
     const g = greetings[greetIdx % greetings.length];
     greetIdx++;
-    const isAhuhvau = g.text.includes('Ахухвау');
-    setSpeech(g.text + `<div class="speech-hint">👇 Нажми на тему или кликни снова</div>`, g.mood, g.mood !== 'normal' ? 4000 : null, isAhuhvau);
+    setSpeech(g.text + `<div class="speech-hint">👇 Нажми на тему или кликни снова</div>`, g.mood, g.mood !== 'normal' ? 4000 : null, false);
   }
 
   setMood('normal');
